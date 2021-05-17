@@ -1,0 +1,199 @@
+{
+  "uid" : "fe6cdf16aff66d00",
+  "name" : "test_Academic_map_demo",
+  "fullName" : "test_main.TestClass#test_Academic_map_demo",
+  "historyId" : "4aa7a42b66e05601cb7f8ec6a4d7d4fa",
+  "time" : {
+    "start" : 1621007963613,
+    "stop" : 1621007965312,
+    "duration" : 1699
+  },
+  "status" : "passed",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ ],
+  "testStage" : {
+    "status" : "passed",
+    "steps" : [ {
+      "name" : "打开浏览器",
+      "time" : {
+        "start" : 1621007964734,
+        "stop" : 1621007965229,
+        "duration" : 495
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "7ef421bfa8b1965b",
+        "name" : "操作信息",
+        "source" : "7ef421bfa8b1965b.attach",
+        "type" : "text/plain",
+        "size" : 156
+      } ],
+      "parameters" : [ {
+        "name" : "url",
+        "value" : "'http://xsdc2.casdc.com/widgets/zju_atlasnew/#'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "等待元素",
+      "time" : {
+        "start" : 1621007965229,
+        "stop" : 1621007965238,
+        "duration" : 9
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "40d57c1a363f4886",
+        "name" : "操作信息",
+        "source" : "40d57c1a363f4886.attach",
+        "type" : "text/plain",
+        "size" : 70
+      } ],
+      "parameters" : [ {
+        "name" : "driver",
+        "value" : "<selenium.webdriver.chrome.webdriver.WebDriver (session=\"f4f0fe6c14a01016a91ba5a4675d236a\")>"
+      }, {
+        "name" : "wait_time",
+        "value" : "30"
+      }, {
+        "name" : "step",
+        "value" : "1"
+      }, {
+        "name" : "selector_tpye",
+        "value" : "'c'"
+      }, {
+        "name" : "selector",
+        "value" : "'logo'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "获取元素内容",
+      "time" : {
+        "start" : 1621007965238,
+        "stop" : 1621007965257,
+        "duration" : 19
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "2c364076878cf81a",
+        "name" : "操作信息",
+        "source" : "2c364076878cf81a.attach",
+        "type" : "text/plain",
+        "size" : 55
+      } ],
+      "parameters" : [ {
+        "name" : "selector",
+        "value" : "'c=>logo'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "断言结果",
+      "time" : {
+        "start" : 1621007965257,
+        "stop" : 1621007965257,
+        "duration" : 0
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "1630247661e6b4cb",
+        "name" : "断言结论",
+        "source" : "1630247661e6b4cb.attach",
+        "type" : "text/plain",
+        "size" : 52
+      } ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "关闭浏览器",
+      "time" : {
+        "start" : 1621007965257,
+        "stop" : 1621007965312,
+        "duration" : 55
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
+    } ],
+    "attachments" : [ {
+      "uid" : "c149303c85a58908",
+      "name" : "log",
+      "source" : "c149303c85a58908.txt",
+      "type" : "text/plain",
+      "size" : 684
+    }, {
+      "uid" : "acd0eeb05a7c8b4b",
+      "name" : "stderr",
+      "source" : "acd0eeb05a7c8b4b.txt",
+      "type" : "text/plain",
+      "size" : 729
+    } ],
+    "parameters" : [ ],
+    "stepsCount" : 5,
+    "attachmentsCount" : 6,
+    "shouldDisplayMessage" : false,
+    "hasContent" : true
+  },
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "story",
+    "value" : "学术图谱demo"
+  }, {
+    "name" : "feature",
+    "value" : "验证演示环境各链接是否活跃"
+  }, {
+    "name" : "suite",
+    "value" : "test_main"
+  }, {
+    "name" : "subSuite",
+    "value" : "TestClass"
+  }, {
+    "name" : "host",
+    "value" : "AliYun"
+  }, {
+    "name" : "thread",
+    "value" : "22487-MainThread"
+  }, {
+    "name" : "framework",
+    "value" : "pytest"
+  }, {
+    "name" : "language",
+    "value" : "cpython3"
+  }, {
+    "name" : "package",
+    "value" : "test_main"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ ],
+  "links" : [ ],
+  "hidden" : true,
+  "retry" : true,
+  "extra" : {
+    "categories" : [ ],
+    "tags" : [ ]
+  },
+  "source" : "fe6cdf16aff66d00.json",
+  "parameterValues" : [ ]
+}

@@ -1,0 +1,433 @@
+{
+  "uid" : "f2c8c0d5d55ad344",
+  "name" : "test_claim_demo",
+  "fullName" : "test_main.TestClass#test_claim_demo",
+  "historyId" : "91e0f915290a3c9a35d38838be70f426",
+  "time" : {
+    "start" : 1621004836645,
+    "stop" : 1621004838959,
+    "duration" : 2314
+  },
+  "status" : "passed",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ ],
+  "testStage" : {
+    "status" : "passed",
+    "steps" : [ {
+      "name" : "打开浏览器",
+      "time" : {
+        "start" : 1621004837762,
+        "stop" : 1621004838133,
+        "duration" : 371
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "7464b51697552d5c",
+        "name" : "操作信息",
+        "source" : "7464b51697552d5c.attach",
+        "type" : "text/plain",
+        "size" : 145
+      } ],
+      "parameters" : [ {
+        "name" : "url",
+        "value" : "'http://conf.casdc.com/widgets/lwrl'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "等待元素",
+      "time" : {
+        "start" : 1621004838133,
+        "stop" : 1621004838153,
+        "duration" : 20
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "3eea7ecb6e36695",
+        "name" : "操作信息",
+        "source" : "3eea7ecb6e36695.attach",
+        "type" : "text/plain",
+        "size" : 81
+      } ],
+      "parameters" : [ {
+        "name" : "driver",
+        "value" : "<selenium.webdriver.chrome.webdriver.WebDriver (session=\"d614dd908d78b8d2ddcf9686bc352277\")>"
+      }, {
+        "name" : "wait_time",
+        "value" : "20"
+      }, {
+        "name" : "step",
+        "value" : "1"
+      }, {
+        "name" : "selector_tpye",
+        "value" : "'n'"
+      }, {
+        "name" : "selector",
+        "value" : "'form[user_name]'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "清空元素",
+      "time" : {
+        "start" : 1621004838153,
+        "stop" : 1621004838192,
+        "duration" : 39
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "5fbf52d5808648fd",
+        "name" : "操作信息",
+        "source" : "5fbf52d5808648fd.attach",
+        "type" : "text/plain",
+        "size" : 41
+      } ],
+      "parameters" : [ {
+        "name" : "selector",
+        "value" : "'n=>form[user_name]'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "输入信息",
+      "time" : {
+        "start" : 1621004838192,
+        "stop" : 1621004838231,
+        "duration" : 39
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "7c4690c28619529e",
+        "name" : "操作信息",
+        "source" : "7c4690c28619529e.attach",
+        "type" : "text/plain",
+        "size" : 59
+      } ],
+      "parameters" : [ {
+        "name" : "selector",
+        "value" : "'n=>form[user_name]'"
+      }, {
+        "name" : "text",
+        "value" : "'091241'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "等待元素",
+      "time" : {
+        "start" : 1621004838231,
+        "stop" : 1621004838251,
+        "duration" : 20
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "96deb976904f0615",
+        "name" : "操作信息",
+        "source" : "96deb976904f0615.attach",
+        "type" : "text/plain",
+        "size" : 80
+      } ],
+      "parameters" : [ {
+        "name" : "driver",
+        "value" : "<selenium.webdriver.chrome.webdriver.WebDriver (session=\"d614dd908d78b8d2ddcf9686bc352277\")>"
+      }, {
+        "name" : "wait_time",
+        "value" : "20"
+      }, {
+        "name" : "step",
+        "value" : "1"
+      }, {
+        "name" : "selector_tpye",
+        "value" : "'n'"
+      }, {
+        "name" : "selector",
+        "value" : "'form[user_pwd]'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "清空元素",
+      "time" : {
+        "start" : 1621004838251,
+        "stop" : 1621004838286,
+        "duration" : 35
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "11a159efd3993a3d",
+        "name" : "操作信息",
+        "source" : "11a159efd3993a3d.attach",
+        "type" : "text/plain",
+        "size" : 40
+      } ],
+      "parameters" : [ {
+        "name" : "selector",
+        "value" : "'n=>form[user_pwd]'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "输入信息",
+      "time" : {
+        "start" : 1621004838286,
+        "stop" : 1621004838329,
+        "duration" : 43
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "60f31e1e00042c18",
+        "name" : "操作信息",
+        "source" : "60f31e1e00042c18.attach",
+        "type" : "text/plain",
+        "size" : 67
+      } ],
+      "parameters" : [ {
+        "name" : "selector",
+        "value" : "'n=>form[user_pwd]'"
+      }, {
+        "name" : "text",
+        "value" : "'Vx7auGERPow!adz'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "等待元素",
+      "time" : {
+        "start" : 1621004838329,
+        "stop" : 1621004838338,
+        "duration" : 9
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "7b677f780bda800d",
+        "name" : "操作信息",
+        "source" : "7b677f780bda800d.attach",
+        "type" : "text/plain",
+        "size" : 75
+      } ],
+      "parameters" : [ {
+        "name" : "driver",
+        "value" : "<selenium.webdriver.chrome.webdriver.WebDriver (session=\"d614dd908d78b8d2ddcf9686bc352277\")>"
+      }, {
+        "name" : "wait_time",
+        "value" : "20"
+      }, {
+        "name" : "step",
+        "value" : "1"
+      }, {
+        "name" : "selector_tpye",
+        "value" : "'c'"
+      }, {
+        "name" : "selector",
+        "value" : "'login-btn'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "点击元素",
+      "time" : {
+        "start" : 1621004838338,
+        "stop" : 1621004838866,
+        "duration" : 528
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "c7c936dbb2f6c123",
+        "name" : "操作信息",
+        "source" : "c7c936dbb2f6c123.attach",
+        "type" : "text/plain",
+        "size" : 35
+      } ],
+      "parameters" : [ {
+        "name" : "selector",
+        "value" : "'c=>login-btn'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "等待元素",
+      "time" : {
+        "start" : 1621004838866,
+        "stop" : 1621004838882,
+        "duration" : 16
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "743d955bb69f5e72",
+        "name" : "操作信息",
+        "source" : "743d955bb69f5e72.attach",
+        "type" : "text/plain",
+        "size" : 98
+      } ],
+      "parameters" : [ {
+        "name" : "driver",
+        "value" : "<selenium.webdriver.chrome.webdriver.WebDriver (session=\"d614dd908d78b8d2ddcf9686bc352277\")>"
+      }, {
+        "name" : "wait_time",
+        "value" : "30"
+      }, {
+        "name" : "step",
+        "value" : "1"
+      }, {
+        "name" : "selector_tpye",
+        "value" : "'x'"
+      }, {
+        "name" : "selector",
+        "value" : "'/html/body/div[2]/div/ul/li[1]/a'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "获取元素内容",
+      "time" : {
+        "start" : 1621004838882,
+        "stop" : 1621004838900,
+        "duration" : 18
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "69138ae8443835ef",
+        "name" : "操作信息",
+        "source" : "69138ae8443835ef.attach",
+        "type" : "text/plain",
+        "size" : 83
+      } ],
+      "parameters" : [ {
+        "name" : "selector",
+        "value" : "'x=>/html/body/div[2]/div/ul/li[1]/a'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "断言结果",
+      "time" : {
+        "start" : 1621004838900,
+        "stop" : 1621004838900,
+        "duration" : 0
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "aaa45b7e413cc79b",
+        "name" : "断言结论",
+        "source" : "aaa45b7e413cc79b.attach",
+        "type" : "text/plain",
+        "size" : 52
+      } ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "关闭浏览器",
+      "time" : {
+        "start" : 1621004838900,
+        "stop" : 1621004838958,
+        "duration" : 58
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
+    } ],
+    "attachments" : [ {
+      "uid" : "45ba0959b84c1b75",
+      "name" : "log",
+      "source" : "45ba0959b84c1b75.txt",
+      "type" : "text/plain",
+      "size" : 1543
+    }, {
+      "uid" : "8f2412edd765bc3f",
+      "name" : "stderr",
+      "source" : "8f2412edd765bc3f.txt",
+      "type" : "text/plain",
+      "size" : 1678
+    } ],
+    "parameters" : [ ],
+    "stepsCount" : 13,
+    "attachmentsCount" : 14,
+    "shouldDisplayMessage" : false,
+    "hasContent" : true
+  },
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "feature",
+    "value" : "验证演示环境各链接是否活跃"
+  }, {
+    "name" : "story",
+    "value" : "认领平台demo"
+  }, {
+    "name" : "suite",
+    "value" : "test_main"
+  }, {
+    "name" : "subSuite",
+    "value" : "TestClass"
+  }, {
+    "name" : "host",
+    "value" : "AliYun"
+  }, {
+    "name" : "thread",
+    "value" : "31208-MainThread"
+  }, {
+    "name" : "framework",
+    "value" : "pytest"
+  }, {
+    "name" : "language",
+    "value" : "cpython3"
+  }, {
+    "name" : "package",
+    "value" : "test_main"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ ],
+  "links" : [ ],
+  "hidden" : true,
+  "retry" : true,
+  "extra" : {
+    "categories" : [ ],
+    "tags" : [ ]
+  },
+  "source" : "f2c8c0d5d55ad344.json",
+  "parameterValues" : [ ]
+}

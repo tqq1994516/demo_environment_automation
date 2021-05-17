@@ -1,0 +1,205 @@
+{
+  "uid" : "31f93dfc6fa62f19",
+  "name" : "test_Academic_libraries_demo",
+  "fullName" : "test_main.TestClass#test_Academic_libraries_demo",
+  "historyId" : "854eda620d61100b32fa215388ab7065",
+  "time" : {
+    "start" : 1621141696435,
+    "stop" : 1621141729578,
+    "duration" : 33143
+  },
+  "status" : "broken",
+  "statusMessage" : "selenium.common.exceptions.TimeoutException: Message: a[href=#password] not find",
+  "statusTrace" : "self = <test_main.TestClass object at 0x7f5f7cbfa100>\n\n    @allure.story(load_dict[5]['name'])\n    def test_Academic_libraries_demo(self):\n        username = 'i=>username1'\n        username_type, username_value = self.str_split(username)\n        username_text = load_dict[5]['account']\n        pwd = 'i=>passwd1'\n        pwd_type, pwd_value = self.str_split(pwd)\n        pwd_text = load_dict[5]['pwd']\n        btn = 'i=>sub_1'\n        btn_type, btn_value = self.str_split(btn)\n        browser = BrowserEngine()\n        browser.open_browser(load_dict[5]['url'])\n        driver = BasePage(browser.driver)\n        login_a = 'c=>sign-in'\n        login_a_type, login_a_value = self.str_split(login_a)\n        wait_element(browser.driver, 30, 1, login_a_type, login_a_value)\n        driver.click(login_a)\n        pwd_login_a = 'x=>a[href=#password]'\n        pwd_login_a_type, pwd_login_a_value = self.str_split(pwd_login_a)\n>       wait_element(browser.driver, 30, 1, pwd_login_a_type, pwd_login_a_value)\n\ntest_main.py:115: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\nframework/base_page.py:21: in wait_element\n    wait.until(EC.visibility_of_element_located((By.XPATH, selector)), \"%s not find\" % selector)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <selenium.webdriver.support.wait.WebDriverWait (session=\"81b02fc17552db128597cd12fd30fe24\")>, method = <selenium.webdriver.support.expected_conditions.visibility_of_element_located object at 0x7f5f7cee1e50>\nmessage = 'a[href=#password] not find'\n\n    def until(self, method, message=''):\n        \"\"\"Calls the method provided with the driver as an argument until the \\\n        return value is not False.\"\"\"\n        screen = None\n        stacktrace = None\n    \n        end_time = time.time() + self._timeout\n        while True:\n            try:\n                value = method(self._driver)\n                if value:\n                    return value\n            except self._ignored_exceptions as exc:\n                screen = getattr(exc, 'screen', None)\n                stacktrace = getattr(exc, 'stacktrace', None)\n            time.sleep(self._poll)\n            if time.time() > end_time:\n                break\n>       raise TimeoutException(message, screen, stacktrace)\nE       selenium.common.exceptions.TimeoutException: Message: a[href=#password] not find\n\n/root/anaconda3/envs/demo_env_autotest/lib/python3.8/site-packages/selenium/webdriver/support/wait.py:80: TimeoutException",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ ],
+  "testStage" : {
+    "status" : "broken",
+    "statusMessage" : "selenium.common.exceptions.TimeoutException: Message: a[href=#password] not find",
+    "statusTrace" : "self = <test_main.TestClass object at 0x7f5f7cbfa100>\n\n    @allure.story(load_dict[5]['name'])\n    def test_Academic_libraries_demo(self):\n        username = 'i=>username1'\n        username_type, username_value = self.str_split(username)\n        username_text = load_dict[5]['account']\n        pwd = 'i=>passwd1'\n        pwd_type, pwd_value = self.str_split(pwd)\n        pwd_text = load_dict[5]['pwd']\n        btn = 'i=>sub_1'\n        btn_type, btn_value = self.str_split(btn)\n        browser = BrowserEngine()\n        browser.open_browser(load_dict[5]['url'])\n        driver = BasePage(browser.driver)\n        login_a = 'c=>sign-in'\n        login_a_type, login_a_value = self.str_split(login_a)\n        wait_element(browser.driver, 30, 1, login_a_type, login_a_value)\n        driver.click(login_a)\n        pwd_login_a = 'x=>a[href=#password]'\n        pwd_login_a_type, pwd_login_a_value = self.str_split(pwd_login_a)\n>       wait_element(browser.driver, 30, 1, pwd_login_a_type, pwd_login_a_value)\n\ntest_main.py:115: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\nframework/base_page.py:21: in wait_element\n    wait.until(EC.visibility_of_element_located((By.XPATH, selector)), \"%s not find\" % selector)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <selenium.webdriver.support.wait.WebDriverWait (session=\"81b02fc17552db128597cd12fd30fe24\")>, method = <selenium.webdriver.support.expected_conditions.visibility_of_element_located object at 0x7f5f7cee1e50>\nmessage = 'a[href=#password] not find'\n\n    def until(self, method, message=''):\n        \"\"\"Calls the method provided with the driver as an argument until the \\\n        return value is not False.\"\"\"\n        screen = None\n        stacktrace = None\n    \n        end_time = time.time() + self._timeout\n        while True:\n            try:\n                value = method(self._driver)\n                if value:\n                    return value\n            except self._ignored_exceptions as exc:\n                screen = getattr(exc, 'screen', None)\n                stacktrace = getattr(exc, 'stacktrace', None)\n            time.sleep(self._poll)\n            if time.time() > end_time:\n                break\n>       raise TimeoutException(message, screen, stacktrace)\nE       selenium.common.exceptions.TimeoutException: Message: a[href=#password] not find\n\n/root/anaconda3/envs/demo_env_autotest/lib/python3.8/site-packages/selenium/webdriver/support/wait.py:80: TimeoutException",
+    "steps" : [ {
+      "name" : "打开浏览器",
+      "time" : {
+        "start" : 1621141697550,
+        "stop" : 1621141699061,
+        "duration" : 1511
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "90b6673f8e95f593",
+        "name" : "操作信息",
+        "source" : "90b6673f8e95f593.attach",
+        "type" : "text/plain",
+        "size" : 157
+      } ],
+      "parameters" : [ {
+        "name" : "url",
+        "value" : "'http://xsdc2.casdc.com/widgets/Encyclopedia_PC'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "等待元素",
+      "time" : {
+        "start" : 1621141699061,
+        "stop" : 1621141699070,
+        "duration" : 9
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "4362c1a68d8f809f",
+        "name" : "操作信息",
+        "source" : "4362c1a68d8f809f.attach",
+        "type" : "text/plain",
+        "size" : 73
+      } ],
+      "parameters" : [ {
+        "name" : "driver",
+        "value" : "<selenium.webdriver.chrome.webdriver.WebDriver (session=\"81b02fc17552db128597cd12fd30fe24\")>"
+      }, {
+        "name" : "wait_time",
+        "value" : "30"
+      }, {
+        "name" : "step",
+        "value" : "1"
+      }, {
+        "name" : "selector_tpye",
+        "value" : "'c'"
+      }, {
+        "name" : "selector",
+        "value" : "'sign-in'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "点击元素",
+      "time" : {
+        "start" : 1621141699070,
+        "stop" : 1621141699253,
+        "duration" : 183
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "3a0a9e2bb7d06400",
+        "name" : "操作信息",
+        "source" : "3a0a9e2bb7d06400.attach",
+        "type" : "text/plain",
+        "size" : 33
+      } ],
+      "parameters" : [ {
+        "name" : "selector",
+        "value" : "'c=>sign-in'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "等待元素",
+      "time" : {
+        "start" : 1621141699253,
+        "stop" : 1621141729487,
+        "duration" : 30234
+      },
+      "status" : "broken",
+      "statusMessage" : "selenium.common.exceptions.TimeoutException: Message: a[href=#password] not find\n\n",
+      "statusTrace" : "  File \"/root/anaconda3/envs/demo_env_autotest/lib/python3.8/site-packages/allure_commons/_allure.py\", line 172, in impl\n    return func(*a, **kw)\n  File \"/root/ceshibu/demo_environment_automation/framework/base_page.py\", line 21, in wait_element\n    wait.until(EC.visibility_of_element_located((By.XPATH, selector)), \"%s not find\" % selector)\n  File \"/root/anaconda3/envs/demo_env_autotest/lib/python3.8/site-packages/selenium/webdriver/support/wait.py\", line 80, in until\n    raise TimeoutException(message, screen, stacktrace)\n",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "a123822414109527",
+        "name" : "操作信息",
+        "source" : "a123822414109527.attach",
+        "type" : "text/plain",
+        "size" : 83
+      } ],
+      "parameters" : [ {
+        "name" : "driver",
+        "value" : "<selenium.webdriver.chrome.webdriver.WebDriver (session=\"81b02fc17552db128597cd12fd30fe24\")>"
+      }, {
+        "name" : "wait_time",
+        "value" : "30"
+      }, {
+        "name" : "step",
+        "value" : "1"
+      }, {
+        "name" : "selector_tpye",
+        "value" : "'x'"
+      }, {
+        "name" : "selector",
+        "value" : "'a[href=#password]'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : true,
+      "hasContent" : true
+    } ],
+    "attachments" : [ {
+      "uid" : "432128aaeb9bf6dd",
+      "name" : "log",
+      "source" : "432128aaeb9bf6dd.txt",
+      "type" : "text/plain",
+      "size" : 745
+    }, {
+      "uid" : "d9dc53d1f1078c58",
+      "name" : "stderr",
+      "source" : "d9dc53d1f1078c58.txt",
+      "type" : "text/plain",
+      "size" : 722
+    } ],
+    "parameters" : [ ],
+    "stepsCount" : 4,
+    "attachmentsCount" : 6,
+    "shouldDisplayMessage" : true,
+    "hasContent" : true
+  },
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "feature",
+    "value" : "验证演示环境各链接是否活跃"
+  }, {
+    "name" : "story",
+    "value" : "学术典藏demo"
+  }, {
+    "name" : "suite",
+    "value" : "test_main"
+  }, {
+    "name" : "subSuite",
+    "value" : "TestClass"
+  }, {
+    "name" : "host",
+    "value" : "AliYun"
+  }, {
+    "name" : "thread",
+    "value" : "31054-MainThread"
+  }, {
+    "name" : "framework",
+    "value" : "pytest"
+  }, {
+    "name" : "language",
+    "value" : "cpython3"
+  }, {
+    "name" : "package",
+    "value" : "test_main"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ ],
+  "links" : [ ],
+  "hidden" : true,
+  "retry" : true,
+  "extra" : {
+    "categories" : [ ],
+    "tags" : [ ]
+  },
+  "source" : "31f93dfc6fa62f19.json",
+  "parameterValues" : [ ]
+}

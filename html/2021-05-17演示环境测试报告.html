@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Test Report</title>
+    <style>body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  /* do not increase min-width as some may use split screens */
+  min-width: 800px;
+  color: #999;
+}
+
+h1 {
+  font-size: 24px;
+  color: black;
+}
+
+h2 {
+  font-size: 16px;
+  color: black;
+}
+
+p {
+  color: black;
+}
+
+a {
+  color: #999;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+/******************************
+ * SUMMARY INFORMATION
+ ******************************/
+#environment td {
+  padding: 5px;
+  border: 1px solid #E6E6E6;
+}
+#environment tr:nth-child(odd) {
+  background-color: #f6f6f6;
+}
+
+/******************************
+ * TEST RESULT COLORS
+ ******************************/
+span.passed,
+.passed .col-result {
+  color: green;
+}
+
+span.skipped,
+span.xfailed,
+span.rerun,
+.skipped .col-result,
+.xfailed .col-result,
+.rerun .col-result {
+  color: orange;
+}
+
+span.error,
+span.failed,
+span.xpassed,
+.error .col-result,
+.failed .col-result,
+.xpassed .col-result {
+  color: red;
+}
+
+/******************************
+ * RESULTS TABLE
+ *
+ * 1. Table Layout
+ * 2. Extra
+ * 3. Sorting items
+ *
+ ******************************/
+/*------------------
+ * 1. Table Layout
+ *------------------*/
+#results-table {
+  border: 1px solid #e6e6e6;
+  color: #999;
+  font-size: 12px;
+  width: 100%;
+}
+#results-table th,
+#results-table td {
+  padding: 5px;
+  border: 1px solid #E6E6E6;
+  text-align: left;
+}
+#results-table th {
+  font-weight: bold;
+}
+
+/*------------------
+ * 2. Extra
+ *------------------*/
+.log {
+  background-color: #e6e6e6;
+  border: 1px solid #e6e6e6;
+  color: black;
+  display: block;
+  font-family: "Courier New", Courier, monospace;
+  height: 230px;
+  overflow-y: scroll;
+  padding: 5px;
+  white-space: pre-wrap;
+}
+.log:only-child {
+  height: inherit;
+}
+
+div.image {
+  border: 1px solid #e6e6e6;
+  float: right;
+  height: 240px;
+  margin-left: 5px;
+  overflow: hidden;
+  width: 320px;
+}
+div.image img {
+  width: 320px;
+}
+
+div.video {
+  border: 1px solid #e6e6e6;
+  float: right;
+  height: 240px;
+  margin-left: 5px;
+  overflow: hidden;
+  width: 320px;
+}
+div.video video {
+  overflow: hidden;
+  width: 320px;
+  height: 240px;
+}
+
+.collapsed {
+  display: none;
+}
+
+.expander::after {
+  content: " (show details)";
+  color: #BBB;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.collapser::after {
+  content: " (hide details)";
+  color: #BBB;
+  font-style: italic;
+  cursor: pointer;
+}
+
+/*------------------
+ * 3. Sorting items
+ *------------------*/
+.sortable {
+  cursor: pointer;
+}
+
+.sort-icon {
+  font-size: 0px;
+  float: left;
+  margin-right: 5px;
+  margin-top: 5px;
+  /*triangle*/
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+}
+.inactive .sort-icon {
+  /*finish triangle*/
+  border-top: 8px solid #E6E6E6;
+}
+.asc.active .sort-icon {
+  /*finish triangle*/
+  border-bottom: 8px solid #999;
+}
+.desc.active .sort-icon {
+  /*finish triangle*/
+  border-top: 8px solid #999;
+}
+</style></head>
+  <body onLoad="init()">
+    <script>/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+
+function toArray(iter) {
+    if (iter === null) {
+        return null;
+    }
+    return Array.prototype.slice.call(iter);
+}
+
+function find(selector, elem) { // eslint-disable-line no-redeclare
+    if (!elem) {
+        elem = document;
+    }
+    return elem.querySelector(selector);
+}
+
+function findAll(selector, elem) {
+    if (!elem) {
+        elem = document;
+    }
+    return toArray(elem.querySelectorAll(selector));
+}
+
+function sortColumn(elem) {
+    toggleSortStates(elem);
+    const colIndex = toArray(elem.parentNode.childNodes).indexOf(elem);
+    let key;
+    if (elem.classList.contains('result')) {
+        key = keyResult;
+    } else if (elem.classList.contains('links')) {
+        key = keyLink;
+    } else {
+        key = keyAlpha;
+    }
+    sortTable(elem, key(colIndex));
+}
+
+function showAllExtras() { // eslint-disable-line no-unused-vars
+    findAll('.col-result').forEach(showExtras);
+}
+
+function hideAllExtras() { // eslint-disable-line no-unused-vars
+    findAll('.col-result').forEach(hideExtras);
+}
+
+function showExtras(colresultElem) {
+    const extras = colresultElem.parentNode.nextElementSibling;
+    const expandcollapse = colresultElem.firstElementChild;
+    extras.classList.remove('collapsed');
+    expandcollapse.classList.remove('expander');
+    expandcollapse.classList.add('collapser');
+}
+
+function hideExtras(colresultElem) {
+    const extras = colresultElem.parentNode.nextElementSibling;
+    const expandcollapse = colresultElem.firstElementChild;
+    extras.classList.add('collapsed');
+    expandcollapse.classList.remove('collapser');
+    expandcollapse.classList.add('expander');
+}
+
+function showFilters() {
+    const filterItems = document.getElementsByClassName('filter');
+    for (let i = 0; i < filterItems.length; i++)
+        filterItems[i].hidden = false;
+}
+
+function addCollapse() {
+    // Add links for show/hide all
+    const resulttable = find('table#results-table');
+    const showhideall = document.createElement('p');
+    showhideall.innerHTML = '<a href="javascript:showAllExtras()">Show all details</a> / ' +
+                            '<a href="javascript:hideAllExtras()">Hide all details</a>';
+    resulttable.parentElement.insertBefore(showhideall, resulttable);
+
+    // Add show/hide link to each result
+    findAll('.col-result').forEach(function(elem) {
+        const collapsed = getQueryParameter('collapsed') || 'Passed';
+        const extras = elem.parentNode.nextElementSibling;
+        const expandcollapse = document.createElement('span');
+        if (extras.classList.contains('collapsed')) {
+            expandcollapse.classList.add('expander');
+        } else if (collapsed.includes(elem.innerHTML)) {
+            extras.classList.add('collapsed');
+            expandcollapse.classList.add('expander');
+        } else {
+            expandcollapse.classList.add('collapser');
+        }
+        elem.appendChild(expandcollapse);
+
+        elem.addEventListener('click', function(event) {
+            if (event.currentTarget.parentNode.nextElementSibling.classList.contains('collapsed')) {
+                showExtras(event.currentTarget);
+            } else {
+                hideExtras(event.currentTarget);
+            }
+        });
+    });
+}
+
+function getQueryParameter(name) {
+    const match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+
+function init () { // eslint-disable-line no-unused-vars
+    resetSortHeaders();
+
+    addCollapse();
+
+    showFilters();
+
+    sortColumn(find('.initial-sort'));
+
+    findAll('.sortable').forEach(function(elem) {
+        elem.addEventListener('click',
+            function() {
+                sortColumn(elem);
+            }, false);
+    });
+}
+
+function sortTable(clicked, keyFunc) {
+    const rows = findAll('.results-table-row');
+    const reversed = !clicked.classList.contains('asc');
+    const sortedRows = sort(rows, keyFunc, reversed);
+    /* Whole table is removed here because browsers acts much slower
+     * when appending existing elements.
+     */
+    const thead = document.getElementById('results-table-head');
+    document.getElementById('results-table').remove();
+    const parent = document.createElement('table');
+    parent.id = 'results-table';
+    parent.appendChild(thead);
+    sortedRows.forEach(function(elem) {
+        parent.appendChild(elem);
+    });
+    document.getElementsByTagName('BODY')[0].appendChild(parent);
+}
+
+function sort(items, keyFunc, reversed) {
+    const sortArray = items.map(function(item, i) {
+        return [keyFunc(item), i];
+    });
+
+    sortArray.sort(function(a, b) {
+        const keyA = a[0];
+        const keyB = b[0];
+
+        if (keyA == keyB) return 0;
+
+        if (reversed) {
+            return keyA < keyB ? 1 : -1;
+        } else {
+            return keyA > keyB ? 1 : -1;
+        }
+    });
+
+    return sortArray.map(function(item) {
+        const index = item[1];
+        return items[index];
+    });
+}
+
+function keyAlpha(colIndex) {
+    return function(elem) {
+        return elem.childNodes[1].childNodes[colIndex].firstChild.data.toLowerCase();
+    };
+}
+
+function keyLink(colIndex) {
+    return function(elem) {
+        const dataCell = elem.childNodes[1].childNodes[colIndex].firstChild;
+        return dataCell == null ? '' : dataCell.innerText.toLowerCase();
+    };
+}
+
+function keyResult(colIndex) {
+    return function(elem) {
+        const strings = ['Error', 'Failed', 'Rerun', 'XFailed', 'XPassed',
+            'Skipped', 'Passed'];
+        return strings.indexOf(elem.childNodes[1].childNodes[colIndex].firstChild.data);
+    };
+}
+
+function resetSortHeaders() {
+    findAll('.sort-icon').forEach(function(elem) {
+        elem.parentNode.removeChild(elem);
+    });
+    findAll('.sortable').forEach(function(elem) {
+        const icon = document.createElement('div');
+        icon.className = 'sort-icon';
+        icon.textContent = 'vvv';
+        elem.insertBefore(icon, elem.firstChild);
+        elem.classList.remove('desc', 'active');
+        elem.classList.add('asc', 'inactive');
+    });
+}
+
+function toggleSortStates(elem) {
+    //if active, toggle between asc and desc
+    if (elem.classList.contains('active')) {
+        elem.classList.toggle('asc');
+        elem.classList.toggle('desc');
+    }
+
+    //if inactive, reset all other functions and add ascending active
+    if (elem.classList.contains('inactive')) {
+        resetSortHeaders();
+        elem.classList.remove('inactive');
+        elem.classList.add('active');
+    }
+}
+
+function isAllRowsHidden(value) {
+    return value.hidden == false;
+}
+
+function filterTable(elem) { // eslint-disable-line no-unused-vars
+    const outcomeAtt = 'data-test-result';
+    const outcome = elem.getAttribute(outcomeAtt);
+    const classOutcome = outcome + ' results-table-row';
+    const outcomeRows = document.getElementsByClassName(classOutcome);
+
+    for(let i = 0; i < outcomeRows.length; i++){
+        outcomeRows[i].hidden = !elem.checked;
+    }
+
+    const rows = findAll('.results-table-row').filter(isAllRowsHidden);
+    const allRowsHidden = rows.length == 0 ? true : false;
+    const notFoundMessage = document.getElementById('not-found-message');
+    notFoundMessage.hidden = !allRowsHidden;
+}
+</script>
+    <h1>2021-05-17演示环境测试报告.html</h1>
+    <p>Report generated on 17-May-2021 at 14:31:07 by <a href="https://pypi.python.org/pypi/pytest-html">pytest-html</a> v3.1.1</p>
+    <h2>Environment</h2>
+    <table id="environment">
+      <tr>
+        <td>JAVA_HOME</td>
+        <td>/home/software/jdk1.8.0_121</td></tr>
+      <tr>
+        <td>Packages</td>
+        <td>{"pluggy": "0.13.1", "py": "1.10.0", "pytest": "6.2.4"}</td></tr>
+      <tr>
+        <td>Platform</td>
+        <td>Linux-3.10.0-1062.4.3.el7.x86_64-x86_64-with-glibc2.10</td></tr>
+      <tr>
+        <td>Plugins</td>
+        <td>{"allure-pytest": "2.8.40", "html": "3.1.1", "metadata": "1.11.0"}</td></tr>
+      <tr>
+        <td>Python</td>
+        <td>3.8.5</td></tr>
+      <tr>
+        <td>项目名称</td>
+        <td> 验证演示环境各链接是否活跃</td></tr></table>
+    <h2>Summary</h2>
+    <p>所属部门: 测试部</p>
+    <p>测试人员: 田晨旭</p>
+    <p>12 tests ran in 291.17 seconds. </p>
+    <p class="filter" hidden="true">(Un)check the boxes to filter the results.</p><input checked="true" class="filter" data-test-result="passed" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="passed">12 passed</span>, <input checked="true" class="filter" data-test-result="skipped" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="skipped">0 skipped</span>, <input checked="true" class="filter" data-test-result="failed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="failed">0 failed</span>, <input checked="true" class="filter" data-test-result="error" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="error">0 errors</span>, <input checked="true" class="filter" data-test-result="xfailed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="xfailed">0 expected failures</span>, <input checked="true" class="filter" data-test-result="xpassed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="xpassed">0 unexpected passes</span>
+    <h2>Results</h2>
+    <table id="results-table">
+      <thead id="results-table-head">
+        <tr>
+          <th class="sortable result initial-sort" col="result">Result</th>
+          <th class="sortable" col="name">Test</th>
+          <th class="sortable" col="duration">Duration</th></tr>
+        <tr hidden="true" id="not-found-message">
+          <th colspan="3">No results found. Try to check the filters</th></tr></thead>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">test_main.py::TestClass::test_subject_demo</td>
+          <td class="col-duration">2.69</td></tr>
+        <tr class="collapsed">
+          <td class="extra" colspan="3">
+            <div class="log"> -----------------------------Captured stderr setup------------------------------ <br/>2021-05-17 14:26:17,414 - BrowserEngine - INFO - Starting Chrome browser.
+<br/> -------------------------------Captured log setup------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:32 Starting Chrome browser.<br/> ------------------------------Captured stderr call------------------------------ <br/>2021-05-17 14:26:17,416 - BrowserEngine - INFO - You had select chrome browser.
+2021-05-17 14:26:17,416 - BrowserEngine - INFO - The test server url is: http://course.researchplus.cn
+2021-05-17 14:26:17,767 - BrowserEngine - INFO - Open url: http://course.researchplus.cn
+2021-05-17 14:26:17,871 - BrowserEngine - INFO - Maximize the current window.
+2021-05-17 14:26:17,872 - BrowserEngine - INFO - Set implicitly wait 2 seconds.
+2021-05-17 14:26:17,907 - BasePage - INFO - Had find the element  successful by n via value: username 
+2021-05-17 14:26:17,931 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:26:17,942 - BasePage - INFO - Had find the element  successful by n via value: username 
+2021-05-17 14:26:17,974 - BasePage - INFO - Had enter subject_admin in inputBox
+2021-05-17 14:26:18,008 - BasePage - INFO - Had find the element  successful by n via value: userpass 
+2021-05-17 14:26:18,031 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:26:18,042 - BasePage - INFO - Had find the element  successful by n via value: userpass 
+2021-05-17 14:26:18,073 - BasePage - INFO - Had enter subject_admin in inputBox
+2021-05-17 14:26:18,096 - BasePage - INFO - Had find the element 登录 successful by c via value: login-form-btn 
+2021-05-17 14:26:18,101 - BasePage - INFO - The element 登录 was clicked.
+2021-05-17 14:26:18,794 - BasePage - INFO - Had find the element 学科管理平台 successful by c via value: logo 
+<br/> -------------------------------Captured log call-------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:40 You had select chrome browser.
+INFO     BrowserEngine:browser_engine.py:41 The test server url is: http://course.researchplus.cn
+INFO     BrowserEngine:browser_engine.py:45 Open url: http://course.researchplus.cn
+INFO     BrowserEngine:browser_engine.py:47 Maximize the current window.
+INFO     BrowserEngine:browser_engine.py:49 Set implicitly wait 2 seconds.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: username 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: username 
+INFO     BasePage:base_page.py:175 Had enter subject_admin in inputBox
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: userpass 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: userpass 
+INFO     BasePage:base_page.py:175 Had enter subject_admin in inputBox
+INFO     BasePage:base_page.py:125 Had find the element 登录 successful by c via value: login-form-btn 
+INFO     BasePage:base_page.py:198 The element 登录 was clicked.
+INFO     BasePage:base_page.py:125 Had find the element 学科管理平台 successful by c via value: logo<br/> ----------------------------Captured stderr teardown---------------------------- <br/>2021-05-17 14:26:18,801 - BasePage - INFO - The browser will close
+<br/> -----------------------------Captured log teardown------------------------------ <br/>INFO     BasePage:base_page.py:46 The browser will close<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">test_main.py::TestClass::test_Northwest_University_demo</td>
+          <td class="col-duration">5.43</td></tr>
+        <tr class="collapsed">
+          <td class="extra" colspan="3">
+            <div class="log"> -----------------------------Captured stderr setup------------------------------ <br/>2021-05-17 14:26:20,092 - BrowserEngine - INFO - Starting Chrome browser.
+<br/> -------------------------------Captured log setup------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:32 Starting Chrome browser.<br/> ------------------------------Captured stderr call------------------------------ <br/>2021-05-17 14:26:20,093 - BrowserEngine - INFO - You had select chrome browser.
+2021-05-17 14:26:20,093 - BrowserEngine - INFO - The test server url is: http://122.112.243.85:8095/index/index/index/site_id/6
+2021-05-17 14:26:20,980 - BrowserEngine - INFO - Open url: http://122.112.243.85:8095/index/index/index/site_id/6
+2021-05-17 14:26:21,083 - BrowserEngine - INFO - Maximize the current window.
+2021-05-17 14:26:21,084 - BrowserEngine - INFO - Set implicitly wait 2 seconds.
+2021-05-17 14:26:21,119 - BasePage - INFO - Had find the element  successful by n via value: username 
+2021-05-17 14:26:21,144 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:26:21,154 - BasePage - INFO - Had find the element  successful by n via value: username 
+2021-05-17 14:26:21,185 - BasePage - INFO - Had enter 19830101 in inputBox
+2021-05-17 14:26:21,219 - BasePage - INFO - Had find the element  successful by n via value: userpass 
+2021-05-17 14:26:21,244 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:26:21,255 - BasePage - INFO - Had find the element  successful by n via value: userpass 
+2021-05-17 14:26:21,285 - BasePage - INFO - Had enter bbox@456 in inputBox
+2021-05-17 14:26:21,309 - BasePage - INFO - Had find the element 登录 successful by c via value: login-form-btn 
+2021-05-17 14:26:21,314 - BasePage - INFO - The element 登录 was clicked.
+2021-05-17 14:26:24,190 - BasePage - INFO - Had find the element 西北大学总览 successful by x via value: /html/body/div[1]/div[2]/div[2]/div[1]/div[1]/div/span 
+<br/> -------------------------------Captured log call-------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:40 You had select chrome browser.
+INFO     BrowserEngine:browser_engine.py:41 The test server url is: http://122.112.243.85:8095/index/index/index/site_id/6
+INFO     BrowserEngine:browser_engine.py:45 Open url: http://122.112.243.85:8095/index/index/index/site_id/6
+INFO     BrowserEngine:browser_engine.py:47 Maximize the current window.
+INFO     BrowserEngine:browser_engine.py:49 Set implicitly wait 2 seconds.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: username 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: username 
+INFO     BasePage:base_page.py:175 Had enter 19830101 in inputBox
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: userpass 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: userpass 
+INFO     BasePage:base_page.py:175 Had enter bbox@456 in inputBox
+INFO     BasePage:base_page.py:125 Had find the element 登录 successful by c via value: login-form-btn 
+INFO     BasePage:base_page.py:198 The element 登录 was clicked.
+INFO     BasePage:base_page.py:153 Had find the element 西北大学总览 successful by x via value: /html/body/div[1]/div[2]/div[2]/div[1]/div[1]/div/span<br/> ----------------------------Captured stderr teardown---------------------------- <br/>2021-05-17 14:26:24,240 - BasePage - INFO - The browser will close
+<br/> -----------------------------Captured log teardown------------------------------ <br/>INFO     BasePage:base_page.py:46 The browser will close<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">test_main.py::TestClass::test_Nankai_University_demo</td>
+          <td class="col-duration">3.37</td></tr>
+        <tr class="collapsed">
+          <td class="extra" colspan="3">
+            <div class="log"> -----------------------------Captured stderr setup------------------------------ <br/>2021-05-17 14:26:25,525 - BrowserEngine - INFO - Starting Chrome browser.
+<br/> -------------------------------Captured log setup------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:32 Starting Chrome browser.<br/> ------------------------------Captured stderr call------------------------------ <br/>2021-05-17 14:26:25,526 - BrowserEngine - INFO - You had select chrome browser.
+2021-05-17 14:26:25,526 - BrowserEngine - INFO - The test server url is: http://122.112.243.85:9376/index/index/index/site_id/48
+2021-05-17 14:26:25,923 - BrowserEngine - INFO - Open url: http://122.112.243.85:9376/index/index/index/site_id/48
+2021-05-17 14:26:26,026 - BrowserEngine - INFO - Maximize the current window.
+2021-05-17 14:26:26,027 - BrowserEngine - INFO - Set implicitly wait 2 seconds.
+2021-05-17 14:26:26,063 - BasePage - INFO - Had find the element  successful by n via value: username 
+2021-05-17 14:26:26,089 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:26:26,100 - BasePage - INFO - Had find the element  successful by n via value: username 
+2021-05-17 14:26:26,130 - BasePage - INFO - Had enter auditor in inputBox
+2021-05-17 14:26:26,164 - BasePage - INFO - Had find the element  successful by n via value: userpass 
+2021-05-17 14:26:26,189 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:26:26,200 - BasePage - INFO - Had find the element  successful by n via value: userpass 
+2021-05-17 14:26:26,232 - BasePage - INFO - Had enter auditor in inputBox
+2021-05-17 14:26:26,255 - BasePage - INFO - Had find the element 登录 successful by c via value: login-form-btn 
+2021-05-17 14:26:26,261 - BasePage - INFO - The element 登录 was clicked.
+2021-05-17 14:26:27,603 - BasePage - INFO - Had find the element 驾驶舱 successful by x via value: /html/body/div[1]/div[1]/div/div[1]/div/div/ul/li[1]/a/span/span[2] 
+<br/> -------------------------------Captured log call-------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:40 You had select chrome browser.
+INFO     BrowserEngine:browser_engine.py:41 The test server url is: http://122.112.243.85:9376/index/index/index/site_id/48
+INFO     BrowserEngine:browser_engine.py:45 Open url: http://122.112.243.85:9376/index/index/index/site_id/48
+INFO     BrowserEngine:browser_engine.py:47 Maximize the current window.
+INFO     BrowserEngine:browser_engine.py:49 Set implicitly wait 2 seconds.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: username 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: username 
+INFO     BasePage:base_page.py:175 Had enter auditor in inputBox
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: userpass 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: userpass 
+INFO     BasePage:base_page.py:175 Had enter auditor in inputBox
+INFO     BasePage:base_page.py:125 Had find the element 登录 successful by c via value: login-form-btn 
+INFO     BasePage:base_page.py:198 The element 登录 was clicked.
+INFO     BasePage:base_page.py:153 Had find the element 驾驶舱 successful by x via value: /html/body/div[1]/div[1]/div/div[1]/div/div/ul/li[1]/a/span/span[2]<br/> ----------------------------Captured stderr teardown---------------------------- <br/>2021-05-17 14:26:27,612 - BasePage - INFO - The browser will close
+<br/> -----------------------------Captured log teardown------------------------------ <br/>INFO     BasePage:base_page.py:46 The browser will close<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">test_main.py::TestClass::test_China_Public_Security_University_demo</td>
+          <td class="col-duration">246.16</td></tr>
+        <tr class="collapsed">
+          <td class="extra" colspan="3">
+            <div class="log"> -----------------------------Captured stderr setup------------------------------ <br/>2021-05-17 14:26:28,908 - BrowserEngine - INFO - Starting Chrome browser.
+<br/> -------------------------------Captured log setup------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:32 Starting Chrome browser.<br/> ------------------------------Captured stderr call------------------------------ <br/>2021-05-17 14:26:28,909 - BrowserEngine - INFO - You had select chrome browser.
+2021-05-17 14:26:28,909 - BrowserEngine - INFO - The test server url is: http://ppsuc.researchplus.cn/
+2021-05-17 14:26:31,632 - BrowserEngine - INFO - Open url: http://ppsuc.researchplus.cn/
+2021-05-17 14:26:31,735 - BrowserEngine - INFO - Maximize the current window.
+2021-05-17 14:26:31,736 - BrowserEngine - INFO - Set implicitly wait 2 seconds.
+2021-05-17 14:26:31,772 - BasePage - INFO - Had find the element  successful by x via value: /html/body/div/div/div/div[2]/div/form/div[1]/div/div[1]/input 
+2021-05-17 14:26:31,797 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:26:31,808 - BasePage - INFO - Had find the element  successful by x via value: /html/body/div/div/div/div[2]/div/form/div[1]/div/div[1]/input 
+2021-05-17 14:26:31,849 - BasePage - INFO - Had enter fgc1 in inputBox
+2021-05-17 14:26:31,888 - BasePage - INFO - Had find the element  successful by x via value: /html/body/div/div/div/div[2]/div/form/div[2]/div/div[1]/input 
+2021-05-17 14:26:31,915 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:26:31,927 - BasePage - INFO - Had find the element  successful by x via value: /html/body/div/div/div/div[2]/div/form/div[2]/div/div[1]/input 
+2021-05-17 14:26:31,971 - BasePage - INFO - Had enter fgc1 in inputBox
+2021-05-17 14:26:32,005 - BasePage - INFO - Had find the element 登录 successful by x via value: /html/body/div/div/div/div[2]/div/div/div/button 
+2021-05-17 14:26:32,011 - BasePage - INFO - The element 登录 was clicked.
+2021-05-17 14:30:33,770 - BasePage - INFO - Had find the element 数据驾驶舱 successful by x via value: /html/body/div/div[1]/div/div[1]/div/div/ul/li[1]/a/span/span[2] 
+<br/> -------------------------------Captured log call-------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:40 You had select chrome browser.
+INFO     BrowserEngine:browser_engine.py:41 The test server url is: http://ppsuc.researchplus.cn/
+INFO     BrowserEngine:browser_engine.py:45 Open url: http://ppsuc.researchplus.cn/
+INFO     BrowserEngine:browser_engine.py:47 Maximize the current window.
+INFO     BrowserEngine:browser_engine.py:49 Set implicitly wait 2 seconds.
+INFO     BasePage:base_page.py:153 Had find the element  successful by x via value: /html/body/div/div/div/div[2]/div/form/div[1]/div/div[1]/input 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:153 Had find the element  successful by x via value: /html/body/div/div/div/div[2]/div/form/div[1]/div/div[1]/input 
+INFO     BasePage:base_page.py:175 Had enter fgc1 in inputBox
+INFO     BasePage:base_page.py:153 Had find the element  successful by x via value: /html/body/div/div/div/div[2]/div/form/div[2]/div/div[1]/input 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:153 Had find the element  successful by x via value: /html/body/div/div/div/div[2]/div/form/div[2]/div/div[1]/input 
+INFO     BasePage:base_page.py:175 Had enter fgc1 in inputBox
+INFO     BasePage:base_page.py:153 Had find the element 登录 successful by x via value: /html/body/div/div/div/div[2]/div/div/div/button 
+INFO     BasePage:base_page.py:198 The element 登录 was clicked.
+INFO     BasePage:base_page.py:153 Had find the element 数据驾驶舱 successful by x via value: /html/body/div/div[1]/div/div[1]/div/div/ul/li[1]/a/span/span[2]<br/> ----------------------------Captured stderr teardown---------------------------- <br/>2021-05-17 14:30:33,778 - BasePage - INFO - The browser will close
+<br/> -----------------------------Captured log teardown------------------------------ <br/>INFO     BasePage:base_page.py:46 The browser will close<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">test_main.py::TestClass::test_claim_demo</td>
+          <td class="col-duration">2.55</td></tr>
+        <tr class="collapsed">
+          <td class="extra" colspan="3">
+            <div class="log"> -----------------------------Captured stderr setup------------------------------ <br/>2021-05-17 14:30:35,079 - BrowserEngine - INFO - Starting Chrome browser.
+<br/> -------------------------------Captured log setup------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:32 Starting Chrome browser.<br/> ------------------------------Captured stderr call------------------------------ <br/>2021-05-17 14:30:35,082 - BrowserEngine - INFO - You had select chrome browser.
+2021-05-17 14:30:35,082 - BrowserEngine - INFO - The test server url is: http://conf.casdc.com/widgets/lwrl
+2021-05-17 14:30:35,435 - BrowserEngine - INFO - Open url: http://conf.casdc.com/widgets/lwrl
+2021-05-17 14:30:35,538 - BrowserEngine - INFO - Maximize the current window.
+2021-05-17 14:30:35,539 - BrowserEngine - INFO - Set implicitly wait 2 seconds.
+2021-05-17 14:30:35,586 - BasePage - INFO - Had find the element  successful by n via value: form[user_name] 
+2021-05-17 14:30:35,612 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:30:35,622 - BasePage - INFO - Had find the element  successful by n via value: form[user_name] 
+2021-05-17 14:30:35,651 - BasePage - INFO - Had enter 091241 in inputBox
+2021-05-17 14:30:35,685 - BasePage - INFO - Had find the element  successful by n via value: form[user_pwd] 
+2021-05-17 14:30:35,708 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:30:35,719 - BasePage - INFO - Had find the element  successful by n via value: form[user_pwd] 
+2021-05-17 14:30:35,751 - BasePage - INFO - Had enter Vx7auGERPow!adz in inputBox
+2021-05-17 14:30:35,775 - BasePage - INFO - Had find the element 登录 successful by c via value: login-btn 
+2021-05-17 14:30:35,780 - BasePage - INFO - The element 登录 was clicked.
+2021-05-17 14:30:36,335 - BasePage - INFO - Had find the element 我的成果 successful by x via value: /html/body/div[2]/div/ul/li[1]/a 
+<br/> -------------------------------Captured log call-------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:40 You had select chrome browser.
+INFO     BrowserEngine:browser_engine.py:41 The test server url is: http://conf.casdc.com/widgets/lwrl
+INFO     BrowserEngine:browser_engine.py:45 Open url: http://conf.casdc.com/widgets/lwrl
+INFO     BrowserEngine:browser_engine.py:47 Maximize the current window.
+INFO     BrowserEngine:browser_engine.py:49 Set implicitly wait 2 seconds.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: form[user_name] 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: form[user_name] 
+INFO     BasePage:base_page.py:175 Had enter 091241 in inputBox
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: form[user_pwd] 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: form[user_pwd] 
+INFO     BasePage:base_page.py:175 Had enter Vx7auGERPow!adz in inputBox
+INFO     BasePage:base_page.py:125 Had find the element 登录 successful by c via value: login-btn 
+INFO     BasePage:base_page.py:198 The element 登录 was clicked.
+INFO     BasePage:base_page.py:153 Had find the element 我的成果 successful by x via value: /html/body/div[2]/div/ul/li[1]/a<br/> ----------------------------Captured stderr teardown---------------------------- <br/>2021-05-17 14:30:36,341 - BasePage - INFO - The browser will close
+<br/> -----------------------------Captured log teardown------------------------------ <br/>INFO     BasePage:base_page.py:46 The browser will close<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">test_main.py::TestClass::test_Academic_libraries_demo</td>
+          <td class="col-duration">5.91</td></tr>
+        <tr class="collapsed">
+          <td class="extra" colspan="3">
+            <div class="log"> -----------------------------Captured stderr setup------------------------------ <br/>2021-05-17 14:30:37,632 - BrowserEngine - INFO - Starting Chrome browser.
+<br/> -------------------------------Captured log setup------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:32 Starting Chrome browser.<br/> ------------------------------Captured stderr call------------------------------ <br/>2021-05-17 14:30:37,634 - BrowserEngine - INFO - You had select chrome browser.
+2021-05-17 14:30:37,634 - BrowserEngine - INFO - The test server url is: http://xsdc2.casdc.com/widgets/Encyclopedia_PC
+2021-05-17 14:30:39,939 - BrowserEngine - INFO - Open url: http://xsdc2.casdc.com/widgets/Encyclopedia_PC
+2021-05-17 14:30:40,042 - BrowserEngine - INFO - Maximize the current window.
+2021-05-17 14:30:40,043 - BrowserEngine - INFO - Set implicitly wait 2 seconds.
+2021-05-17 14:30:40,067 - BasePage - INFO - Had find the element 登录 successful by c via value: sign-in 
+2021-05-17 14:30:40,072 - BasePage - INFO - The element 登录 was clicked.
+2021-05-17 14:30:40,344 - BasePage - INFO - Had find the element 密码登录 successful by s via value: a[href=&quot;#password&quot;] 
+2021-05-17 14:30:40,454 - BasePage - INFO - Had find the element 登录 successful by x via value: /html/body/div/div[2]/div/div/div/div[2]/form/button 
+2021-05-17 14:30:40,549 - BrowserEngine - INFO - You had select chrome browser.
+2021-05-17 14:30:40,549 - BrowserEngine - INFO - The test server url is: http://xsdc2.casdc.com/widgets/Encyclopedia_PC
+2021-05-17 14:30:42,220 - BrowserEngine - INFO - Open url: http://xsdc2.casdc.com/widgets/Encyclopedia_PC
+2021-05-17 14:30:42,223 - BrowserEngine - INFO - Maximize the current window.
+2021-05-17 14:30:42,224 - BrowserEngine - INFO - Set implicitly wait 2 seconds.
+2021-05-17 14:30:42,255 - BasePage - INFO - Had find the element zhejiang successful by x via value: /html/body/div[1]/div[1]/div[1]/div/span/span/a 
+<br/> -------------------------------Captured log call-------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:40 You had select chrome browser.
+INFO     BrowserEngine:browser_engine.py:41 The test server url is: http://xsdc2.casdc.com/widgets/Encyclopedia_PC
+INFO     BrowserEngine:browser_engine.py:45 Open url: http://xsdc2.casdc.com/widgets/Encyclopedia_PC
+INFO     BrowserEngine:browser_engine.py:47 Maximize the current window.
+INFO     BrowserEngine:browser_engine.py:49 Set implicitly wait 2 seconds.
+INFO     BasePage:base_page.py:125 Had find the element 登录 successful by c via value: sign-in 
+INFO     BasePage:base_page.py:198 The element 登录 was clicked.
+INFO     BasePage:base_page.py:160 Had find the element 密码登录 successful by s via value: a[href=&quot;#password&quot;] 
+INFO     BasePage:base_page.py:153 Had find the element 登录 successful by x via value: /html/body/div/div[2]/div/div/div/div[2]/form/button 
+INFO     BrowserEngine:browser_engine.py:40 You had select chrome browser.
+INFO     BrowserEngine:browser_engine.py:41 The test server url is: http://xsdc2.casdc.com/widgets/Encyclopedia_PC
+INFO     BrowserEngine:browser_engine.py:45 Open url: http://xsdc2.casdc.com/widgets/Encyclopedia_PC
+INFO     BrowserEngine:browser_engine.py:47 Maximize the current window.
+INFO     BrowserEngine:browser_engine.py:49 Set implicitly wait 2 seconds.
+INFO     BasePage:base_page.py:153 Had find the element zhejiang successful by x via value: /html/body/div[1]/div[1]/div[1]/div/span/span/a<br/> ----------------------------Captured stderr teardown---------------------------- <br/>2021-05-17 14:30:42,262 - BasePage - INFO - The browser will close
+<br/> -----------------------------Captured log teardown------------------------------ <br/>INFO     BasePage:base_page.py:46 The browser will close<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">test_main.py::TestClass::test_Academic_map_demo</td>
+          <td class="col-duration">1.92</td></tr>
+        <tr class="collapsed">
+          <td class="extra" colspan="3">
+            <div class="log"> -----------------------------Captured stderr setup------------------------------ <br/>2021-05-17 14:30:43,554 - BrowserEngine - INFO - Starting Chrome browser.
+<br/> -------------------------------Captured log setup------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:32 Starting Chrome browser.<br/> ------------------------------Captured stderr call------------------------------ <br/>2021-05-17 14:30:43,555 - BrowserEngine - INFO - You had select chrome browser.
+2021-05-17 14:30:43,556 - BrowserEngine - INFO - The test server url is: http://xsdc2.casdc.com/widgets/zju_atlasnew/#
+2021-05-17 14:30:44,056 - BrowserEngine - INFO - Open url: http://xsdc2.casdc.com/widgets/zju_atlasnew/#
+2021-05-17 14:30:44,159 - BrowserEngine - INFO - Maximize the current window.
+2021-05-17 14:30:44,161 - BrowserEngine - INFO - Set implicitly wait 2 seconds.
+2021-05-17 14:30:44,184 - BasePage - INFO - Had find the element 学术图谱 successful by c via value: logo 
+<br/> -------------------------------Captured log call-------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:40 You had select chrome browser.
+INFO     BrowserEngine:browser_engine.py:41 The test server url is: http://xsdc2.casdc.com/widgets/zju_atlasnew/#
+INFO     BrowserEngine:browser_engine.py:45 Open url: http://xsdc2.casdc.com/widgets/zju_atlasnew/#
+INFO     BrowserEngine:browser_engine.py:47 Maximize the current window.
+INFO     BrowserEngine:browser_engine.py:49 Set implicitly wait 2 seconds.
+INFO     BasePage:base_page.py:125 Had find the element 学术图谱 successful by c via value: logo<br/> ----------------------------Captured stderr teardown---------------------------- <br/>2021-05-17 14:30:44,190 - BasePage - INFO - The browser will close
+<br/> -----------------------------Captured log teardown------------------------------ <br/>INFO     BasePage:base_page.py:46 The browser will close<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">test_main.py::TestClass::test_Research_assistant_demo</td>
+          <td class="col-duration">5.26</td></tr>
+        <tr class="collapsed">
+          <td class="extra" colspan="3">
+            <div class="log"> -----------------------------Captured stderr setup------------------------------ <br/>2021-05-17 14:30:45,490 - BrowserEngine - INFO - Starting Chrome browser.
+<br/> -------------------------------Captured log setup------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:32 Starting Chrome browser.<br/> ------------------------------Captured stderr call------------------------------ <br/>2021-05-17 14:30:45,492 - BrowserEngine - INFO - You had select chrome browser.
+2021-05-17 14:30:45,492 - BrowserEngine - INFO - The test server url is: http://p.casdc.com/widgets/xstt/
+2021-05-17 14:30:46,518 - BrowserEngine - INFO - Open url: http://p.casdc.com/widgets/xstt/
+2021-05-17 14:30:46,621 - BrowserEngine - INFO - Maximize the current window.
+2021-05-17 14:30:46,622 - BrowserEngine - INFO - Set implicitly wait 2 seconds.
+2021-05-17 14:30:46,656 - BasePage - INFO - Had find the element  successful by x via value: /html/body/div[1]/div[2]/div[2]/div/div/div[1]/form/div[1]/input 
+2021-05-17 14:30:46,681 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:30:46,693 - BasePage - INFO - Had find the element  successful by x via value: /html/body/div[1]/div[2]/div[2]/div/div/div[1]/form/div[1]/input 
+2021-05-17 14:30:46,726 - BasePage - INFO - Had enter ceshi in inputBox
+2021-05-17 14:30:46,764 - BasePage - INFO - Had find the element  successful by x via value: /html/body/div[1]/div[2]/div[2]/div/div/div[1]/form/div[2]/input 
+2021-05-17 14:30:46,787 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:30:46,800 - BasePage - INFO - Had find the element  successful by x via value: /html/body/div[1]/div[2]/div[2]/div/div/div[1]/form/div[2]/input 
+2021-05-17 14:30:46,832 - BasePage - INFO - Had enter !Q2w3e4r in inputBox
+2021-05-17 14:30:46,864 - BasePage - INFO - Had find the element 登录 successful by x via value: /html/body/div[1]/div[2]/div[2]/div/div/div[1]/form/button 
+2021-05-17 14:30:46,869 - BasePage - INFO - The element 登录 was clicked.
+2021-05-17 14:30:49,447 - BasePage - INFO - Had find the element SciTube  科研助手 successful by x via value: /html/body/div[1]/div[1]/div/a 
+<br/> -------------------------------Captured log call-------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:40 You had select chrome browser.
+INFO     BrowserEngine:browser_engine.py:41 The test server url is: http://p.casdc.com/widgets/xstt/
+INFO     BrowserEngine:browser_engine.py:45 Open url: http://p.casdc.com/widgets/xstt/
+INFO     BrowserEngine:browser_engine.py:47 Maximize the current window.
+INFO     BrowserEngine:browser_engine.py:49 Set implicitly wait 2 seconds.
+INFO     BasePage:base_page.py:153 Had find the element  successful by x via value: /html/body/div[1]/div[2]/div[2]/div/div/div[1]/form/div[1]/input 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:153 Had find the element  successful by x via value: /html/body/div[1]/div[2]/div[2]/div/div/div[1]/form/div[1]/input 
+INFO     BasePage:base_page.py:175 Had enter ceshi in inputBox
+INFO     BasePage:base_page.py:153 Had find the element  successful by x via value: /html/body/div[1]/div[2]/div[2]/div/div/div[1]/form/div[2]/input 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:153 Had find the element  successful by x via value: /html/body/div[1]/div[2]/div[2]/div/div/div[1]/form/div[2]/input 
+INFO     BasePage:base_page.py:175 Had enter !Q2w3e4r in inputBox
+INFO     BasePage:base_page.py:153 Had find the element 登录 successful by x via value: /html/body/div[1]/div[2]/div[2]/div/div/div[1]/form/button 
+INFO     BasePage:base_page.py:198 The element 登录 was clicked.
+INFO     BasePage:base_page.py:153 Had find the element SciTube  科研助手 successful by x via value: /html/body/div[1]/div[1]/div/a<br/> ----------------------------Captured stderr teardown---------------------------- <br/>2021-05-17 14:30:49,453 - BasePage - INFO - The browser will close
+<br/> -----------------------------Captured log teardown------------------------------ <br/>INFO     BasePage:base_page.py:46 The browser will close<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">test_main.py::TestClass::test_Traditional_Chinese_Medicine_University_Of_Guangzhou_demo</td>
+          <td class="col-duration">3.16</td></tr>
+        <tr class="collapsed">
+          <td class="extra" colspan="3">
+            <div class="log"> -----------------------------Captured stderr setup------------------------------ <br/>2021-05-17 14:30:50,768 - BrowserEngine - INFO - Starting Chrome browser.
+<br/> -------------------------------Captured log setup------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:32 Starting Chrome browser.<br/> ------------------------------Captured stderr call------------------------------ <br/>2021-05-17 14:30:50,769 - BrowserEngine - INFO - You had select chrome browser.
+2021-05-17 14:30:50,769 - BrowserEngine - INFO - The test server url is: http://gzucm.researchplus.cn/
+2021-05-17 14:30:51,147 - BrowserEngine - INFO - Open url: http://gzucm.researchplus.cn/
+2021-05-17 14:30:51,250 - BrowserEngine - INFO - Maximize the current window.
+2021-05-17 14:30:51,251 - BrowserEngine - INFO - Set implicitly wait 2 seconds.
+2021-05-17 14:30:51,286 - BasePage - INFO - Had find the element  successful by x via value: /html/body/div[1]/div/div[1]/div[2]/div/form/div[1]/div/div[1]/input 
+2021-05-17 14:30:51,310 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:30:51,320 - BasePage - INFO - Had find the element  successful by x via value: /html/body/div[1]/div/div[1]/div[2]/div/form/div[1]/div/div[1]/input 
+2021-05-17 14:30:51,409 - BasePage - INFO - Had enter gzy_admin in inputBox
+2021-05-17 14:30:51,448 - BasePage - INFO - Had find the element  successful by x via value: /html/body/div[1]/div/div[1]/div[2]/div/form/div[2]/div/div[1]/input 
+2021-05-17 14:30:51,476 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:30:51,488 - BasePage - INFO - Had find the element  successful by x via value: /html/body/div[1]/div/div[1]/div[2]/div/form/div[2]/div/div[1]/input 
+2021-05-17 14:30:51,558 - BasePage - INFO - Had enter bbox@456 in inputBox
+2021-05-17 14:30:51,594 - BasePage - INFO - Had find the element 登录 successful by x via value: /html/body/div/div/div[1]/div[2]/div/div/div/button 
+2021-05-17 14:30:51,601 - BasePage - INFO - The element 登录 was clicked.
+2021-05-17 14:30:52,609 - BasePage - INFO - Had find the element 考核结果 successful by x via value: /html/body/div[1]/div[1]/div[2]/div[2]/ul/li[1]/div/span/a 
+<br/> -------------------------------Captured log call-------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:40 You had select chrome browser.
+INFO     BrowserEngine:browser_engine.py:41 The test server url is: http://gzucm.researchplus.cn/
+INFO     BrowserEngine:browser_engine.py:45 Open url: http://gzucm.researchplus.cn/
+INFO     BrowserEngine:browser_engine.py:47 Maximize the current window.
+INFO     BrowserEngine:browser_engine.py:49 Set implicitly wait 2 seconds.
+INFO     BasePage:base_page.py:153 Had find the element  successful by x via value: /html/body/div[1]/div/div[1]/div[2]/div/form/div[1]/div/div[1]/input 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:153 Had find the element  successful by x via value: /html/body/div[1]/div/div[1]/div[2]/div/form/div[1]/div/div[1]/input 
+INFO     BasePage:base_page.py:175 Had enter gzy_admin in inputBox
+INFO     BasePage:base_page.py:153 Had find the element  successful by x via value: /html/body/div[1]/div/div[1]/div[2]/div/form/div[2]/div/div[1]/input 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:153 Had find the element  successful by x via value: /html/body/div[1]/div/div[1]/div[2]/div/form/div[2]/div/div[1]/input 
+INFO     BasePage:base_page.py:175 Had enter bbox@456 in inputBox
+INFO     BasePage:base_page.py:153 Had find the element 登录 successful by x via value: /html/body/div/div/div[1]/div[2]/div/div/div/button 
+INFO     BasePage:base_page.py:198 The element 登录 was clicked.
+INFO     BasePage:base_page.py:153 Had find the element 考核结果 successful by x via value: /html/body/div[1]/div[1]/div[2]/div[2]/ul/li[1]/div/span/a<br/> ----------------------------Captured stderr teardown---------------------------- <br/>2021-05-17 14:30:52,615 - BasePage - INFO - The browser will close
+<br/> -----------------------------Captured log teardown------------------------------ <br/>INFO     BasePage:base_page.py:46 The browser will close<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">test_main.py::TestClass::test_Beijing_Institute_of_Technology_demo</td>
+          <td class="col-duration">6.24</td></tr>
+        <tr class="collapsed">
+          <td class="extra" colspan="3">
+            <div class="log"> -----------------------------Captured stderr setup------------------------------ <br/>2021-05-17 14:30:53,907 - BrowserEngine - INFO - Starting Chrome browser.
+<br/> -------------------------------Captured log setup------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:32 Starting Chrome browser.<br/> ------------------------------Captured stderr call------------------------------ <br/>2021-05-17 14:30:53,908 - BrowserEngine - INFO - You had select chrome browser.
+2021-05-17 14:30:53,908 - BrowserEngine - INFO - The test server url is: http://122.112.243.85:8089?site_id=35
+2021-05-17 14:30:55,387 - BrowserEngine - INFO - Open url: http://122.112.243.85:8089?site_id=35
+2021-05-17 14:30:55,490 - BrowserEngine - INFO - Maximize the current window.
+2021-05-17 14:30:55,491 - BrowserEngine - INFO - Set implicitly wait 2 seconds.
+2021-05-17 14:30:55,528 - BasePage - INFO - Had find the element  successful by x via value: /html/body/div/div/div[1]/div[2]/div/form/div[1]/div/div[1]/input 
+2021-05-17 14:30:55,551 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:30:55,562 - BasePage - INFO - Had find the element  successful by x via value: /html/body/div/div/div[1]/div[2]/div/form/div[1]/div/div[1]/input 
+2021-05-17 14:30:55,645 - BasePage - INFO - Had enter blg_yxms in inputBox
+2021-05-17 14:30:55,684 - BasePage - INFO - Had find the element  successful by x via value: /html/body/div/div/div[1]/div[2]/div/form/div[2]/div/div[1]/input 
+2021-05-17 14:30:55,711 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:30:55,723 - BasePage - INFO - Had find the element  successful by x via value: /html/body/div/div/div[1]/div[2]/div/form/div[2]/div/div[1]/input 
+2021-05-17 14:30:55,786 - BasePage - INFO - Had enter 123456 in inputBox
+2021-05-17 14:30:55,823 - BasePage - INFO - Had find the element 登录 successful by x via value: /html/body/div/div/div[1]/div[2]/div/div/div/button/span/span 
+2021-05-17 14:30:55,829 - BasePage - INFO - The element 登录 was clicked.
+2021-05-17 14:30:58,839 - BasePage - INFO - Had find the element 绩效看板 successful by x via value: /html/body/div[1]/div[2]/div[1]/div/ul/li[1]/a 
+<br/> -------------------------------Captured log call-------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:40 You had select chrome browser.
+INFO     BrowserEngine:browser_engine.py:41 The test server url is: http://122.112.243.85:8089?site_id=35
+INFO     BrowserEngine:browser_engine.py:45 Open url: http://122.112.243.85:8089?site_id=35
+INFO     BrowserEngine:browser_engine.py:47 Maximize the current window.
+INFO     BrowserEngine:browser_engine.py:49 Set implicitly wait 2 seconds.
+INFO     BasePage:base_page.py:153 Had find the element  successful by x via value: /html/body/div/div/div[1]/div[2]/div/form/div[1]/div/div[1]/input 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:153 Had find the element  successful by x via value: /html/body/div/div/div[1]/div[2]/div/form/div[1]/div/div[1]/input 
+INFO     BasePage:base_page.py:175 Had enter blg_yxms in inputBox
+INFO     BasePage:base_page.py:153 Had find the element  successful by x via value: /html/body/div/div/div[1]/div[2]/div/form/div[2]/div/div[1]/input 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:153 Had find the element  successful by x via value: /html/body/div/div/div[1]/div[2]/div/form/div[2]/div/div[1]/input 
+INFO     BasePage:base_page.py:175 Had enter 123456 in inputBox
+INFO     BasePage:base_page.py:153 Had find the element 登录 successful by x via value: /html/body/div/div/div[1]/div[2]/div/div/div/button/span/span 
+INFO     BasePage:base_page.py:198 The element 登录 was clicked.
+INFO     BasePage:base_page.py:153 Had find the element 绩效看板 successful by x via value: /html/body/div[1]/div[2]/div[1]/div/ul/li[1]/a<br/> ----------------------------Captured stderr teardown---------------------------- <br/>2021-05-17 14:30:58,866 - BasePage - INFO - The browser will close
+<br/> -----------------------------Captured log teardown------------------------------ <br/>INFO     BasePage:base_page.py:46 The browser will close<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">test_main.py::TestClass::test_Beijing_University_of_Posts_and_Telecommunications_demo</td>
+          <td class="col-duration">5.70</td></tr>
+        <tr class="collapsed">
+          <td class="extra" colspan="3">
+            <div class="log"> -----------------------------Captured stderr setup------------------------------ <br/>2021-05-17 14:31:00,173 - BrowserEngine - INFO - Starting Chrome browser.
+<br/> -------------------------------Captured log setup------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:32 Starting Chrome browser.<br/> ------------------------------Captured stderr call------------------------------ <br/>2021-05-17 14:31:00,175 - BrowserEngine - INFO - You had select chrome browser.
+2021-05-17 14:31:00,175 - BrowserEngine - INFO - The test server url is: http://yanshi.casdc.com/index/index/login.html?site_id=109
+2021-05-17 14:31:00,397 - BrowserEngine - INFO - Open url: http://yanshi.casdc.com/index/index/login.html?site_id=109
+2021-05-17 14:31:00,500 - BrowserEngine - INFO - Maximize the current window.
+2021-05-17 14:31:00,502 - BrowserEngine - INFO - Set implicitly wait 2 seconds.
+2021-05-17 14:31:00,540 - BasePage - INFO - Had find the element  successful by n via value: username 
+2021-05-17 14:31:00,570 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:31:00,585 - BasePage - INFO - Had find the element  successful by n via value: username 
+2021-05-17 14:31:00,628 - BasePage - INFO - Had enter 2010810769 in inputBox
+2021-05-17 14:31:00,671 - BasePage - INFO - Had find the element  successful by n via value: userpass 
+2021-05-17 14:31:00,706 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:31:00,721 - BasePage - INFO - Had find the element  successful by n via value: userpass 
+2021-05-17 14:31:00,763 - BasePage - INFO - Had enter 2010810769 in inputBox
+2021-05-17 14:31:00,792 - BasePage - INFO - Had find the element 登录 successful by c via value: login-form-btn 
+2021-05-17 14:31:00,799 - BasePage - INFO - The element 登录 was clicked.
+2021-05-17 14:31:04,568 - BasePage - INFO - Had find the element 导师综合服务门户 successful by c via value: header-left 
+<br/> -------------------------------Captured log call-------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:40 You had select chrome browser.
+INFO     BrowserEngine:browser_engine.py:41 The test server url is: http://yanshi.casdc.com/index/index/login.html?site_id=109
+INFO     BrowserEngine:browser_engine.py:45 Open url: http://yanshi.casdc.com/index/index/login.html?site_id=109
+INFO     BrowserEngine:browser_engine.py:47 Maximize the current window.
+INFO     BrowserEngine:browser_engine.py:49 Set implicitly wait 2 seconds.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: username 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: username 
+INFO     BasePage:base_page.py:175 Had enter 2010810769 in inputBox
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: userpass 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: userpass 
+INFO     BasePage:base_page.py:175 Had enter 2010810769 in inputBox
+INFO     BasePage:base_page.py:125 Had find the element 登录 successful by c via value: login-form-btn 
+INFO     BasePage:base_page.py:198 The element 登录 was clicked.
+INFO     BasePage:base_page.py:125 Had find the element 导师综合服务门户 successful by c via value: header-left<br/> ----------------------------Captured stderr teardown---------------------------- <br/>2021-05-17 14:31:04,576 - BasePage - INFO - The browser will close
+<br/> -----------------------------Captured log teardown------------------------------ <br/>INFO     BasePage:base_page.py:46 The browser will close<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">test_main.py::TestClass::test_Sichuan_Vocational_College_of_Mechanical_and_Electrical_Technology_demo</td>
+          <td class="col-duration">2.66</td></tr>
+        <tr class="collapsed">
+          <td class="extra" colspan="3">
+            <div class="log"> -----------------------------Captured stderr setup------------------------------ <br/>2021-05-17 14:31:05,877 - BrowserEngine - INFO - Starting Chrome browser.
+<br/> -------------------------------Captured log setup------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:32 Starting Chrome browser.<br/> ------------------------------Captured stderr call------------------------------ <br/>2021-05-17 14:31:05,878 - BrowserEngine - INFO - You had select chrome browser.
+2021-05-17 14:31:05,878 - BrowserEngine - INFO - The test server url is: http://122.112.243.85:9375/index/index/index/site_id/28
+2021-05-17 14:31:06,260 - BrowserEngine - INFO - Open url: http://122.112.243.85:9375/index/index/index/site_id/28
+2021-05-17 14:31:06,363 - BrowserEngine - INFO - Maximize the current window.
+2021-05-17 14:31:06,364 - BrowserEngine - INFO - Set implicitly wait 2 seconds.
+2021-05-17 14:31:06,399 - BasePage - INFO - Had find the element  successful by n via value: username 
+2021-05-17 14:31:06,423 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:31:06,434 - BasePage - INFO - Had find the element  successful by n via value: username 
+2021-05-17 14:31:06,464 - BasePage - INFO - Had enter zhoujia in inputBox
+2021-05-17 14:31:06,497 - BasePage - INFO - Had find the element  successful by n via value: userpass 
+2021-05-17 14:31:06,520 - BasePage - INFO - Clear text in input box before typing.
+2021-05-17 14:31:06,531 - BasePage - INFO - Had find the element  successful by n via value: userpass 
+2021-05-17 14:31:06,562 - BasePage - INFO - Had enter scjd123456! in inputBox
+2021-05-17 14:31:06,585 - BasePage - INFO - Had find the element 登录 successful by c via value: login-form-btn 
+2021-05-17 14:31:06,590 - BasePage - INFO - The element 登录 was clicked.
+2021-05-17 14:31:07,240 - BasePage - INFO - Had find the element 内部质量体系信息平台软件 successful by c via value: head_litterTitle 
+<br/> -------------------------------Captured log call-------------------------------- <br/>INFO     BrowserEngine:browser_engine.py:40 You had select chrome browser.
+INFO     BrowserEngine:browser_engine.py:41 The test server url is: http://122.112.243.85:9375/index/index/index/site_id/28
+INFO     BrowserEngine:browser_engine.py:45 Open url: http://122.112.243.85:9375/index/index/index/site_id/28
+INFO     BrowserEngine:browser_engine.py:47 Maximize the current window.
+INFO     BrowserEngine:browser_engine.py:49 Set implicitly wait 2 seconds.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: username 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: username 
+INFO     BasePage:base_page.py:175 Had enter zhoujia in inputBox
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: userpass 
+INFO     BasePage:base_page.py:187 Clear text in input box before typing.
+INFO     BasePage:base_page.py:118 Had find the element  successful by n via value: userpass 
+INFO     BasePage:base_page.py:175 Had enter scjd123456! in inputBox
+INFO     BasePage:base_page.py:125 Had find the element 登录 successful by c via value: login-form-btn 
+INFO     BasePage:base_page.py:198 The element 登录 was clicked.
+INFO     BasePage:base_page.py:125 Had find the element 内部质量体系信息平台软件 successful by c via value: head_litterTitle<br/> ----------------------------Captured stderr teardown---------------------------- <br/>2021-05-17 14:31:07,247 - BasePage - INFO - The browser will close
+<br/> -----------------------------Captured log teardown------------------------------ <br/>INFO     BasePage:base_page.py:46 The browser will close<br/></div></td></tr></tbody></table></body></html>

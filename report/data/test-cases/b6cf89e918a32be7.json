@@ -1,0 +1,137 @@
+{
+  "uid" : "b6cf89e918a32be7",
+  "name" : "test_Academic_libraries_demo",
+  "fullName" : "test_main.TestClass#test_Academic_libraries_demo",
+  "historyId" : "854eda620d61100b32fa215388ab7065",
+  "time" : {
+    "start" : 1621230558833,
+    "stop" : 1621230561935,
+    "duration" : 3102
+  },
+  "status" : "broken",
+  "statusMessage" : "NameError: name 'pwd_login_a_type' is not defined",
+  "statusTrace" : "self = <test_main.TestClass object at 0x7f0c482370a0>\n\n    @allure.story(load_dict[5]['name'])\n    def test_Academic_libraries_demo(self):\n        username = 'i=>username1'\n        username_type, username_value = self.str_split(username)\n        username_text = load_dict[5]['account']\n        pwd = 'i=>passwd1'\n        pwd_type, pwd_value = self.str_split(pwd)\n        pwd_text = load_dict[5]['pwd']\n        btn = 'i=>sub_1'\n        btn_type, btn_value = self.str_split(btn)\n        self.browser.open_browser(load_dict[5]['url'])\n        login_a = 'c=>sign-in'\n        login_a_type, login_a_value = self.str_split(login_a)\n>       wait_element(self.browser.driver, 30, 1, pwd_login_a_type, pwd_login_a_value)\nE       NameError: name 'pwd_login_a_type' is not defined\n\ntest_main.py:113: NameError",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ {
+    "name" : "xunit_setup_class_fixture_TestClass",
+    "time" : {
+      "start" : 1621230285328,
+      "stop" : 1621230286583,
+      "duration" : 1255
+    },
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "stepsCount" : 0,
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "hasContent" : false
+  } ],
+  "testStage" : {
+    "status" : "broken",
+    "statusMessage" : "NameError: name 'pwd_login_a_type' is not defined",
+    "statusTrace" : "self = <test_main.TestClass object at 0x7f0c482370a0>\n\n    @allure.story(load_dict[5]['name'])\n    def test_Academic_libraries_demo(self):\n        username = 'i=>username1'\n        username_type, username_value = self.str_split(username)\n        username_text = load_dict[5]['account']\n        pwd = 'i=>passwd1'\n        pwd_type, pwd_value = self.str_split(pwd)\n        pwd_text = load_dict[5]['pwd']\n        btn = 'i=>sub_1'\n        btn_type, btn_value = self.str_split(btn)\n        self.browser.open_browser(load_dict[5]['url'])\n        login_a = 'c=>sign-in'\n        login_a_type, login_a_value = self.str_split(login_a)\n>       wait_element(self.browser.driver, 30, 1, pwd_login_a_type, pwd_login_a_value)\nE       NameError: name 'pwd_login_a_type' is not defined\n\ntest_main.py:113: NameError",
+    "steps" : [ {
+      "name" : "打开浏览器",
+      "time" : {
+        "start" : 1621230558833,
+        "stop" : 1621230561935,
+        "duration" : 3102
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "c52ada0b26a9f42f",
+        "name" : "操作信息",
+        "source" : "c52ada0b26a9f42f.attach",
+        "type" : "text/plain",
+        "size" : 157
+      } ],
+      "parameters" : [ {
+        "name" : "url",
+        "value" : "'http://xsdc2.casdc.com/widgets/Encyclopedia_PC'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    } ],
+    "attachments" : [ {
+      "uid" : "548aed8127bf9b21",
+      "name" : "log",
+      "source" : "548aed8127bf9b21.txt",
+      "type" : "text/plain",
+      "size" : 483
+    }, {
+      "uid" : "d5e53b0cb46c7c07",
+      "name" : "stderr",
+      "source" : "d5e53b0cb46c7c07.txt",
+      "type" : "text/plain",
+      "size" : 464
+    } ],
+    "parameters" : [ ],
+    "stepsCount" : 1,
+    "attachmentsCount" : 3,
+    "shouldDisplayMessage" : true,
+    "hasContent" : true
+  },
+  "afterStages" : [ {
+    "name" : "xunit_setup_class_fixture_TestClass::0",
+    "time" : {
+      "start" : 1621230619607,
+      "stop" : 1621230619678,
+      "duration" : 71
+    },
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "stepsCount" : 0,
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "hasContent" : false
+  } ],
+  "labels" : [ {
+    "name" : "story",
+    "value" : "学术典藏demo"
+  }, {
+    "name" : "feature",
+    "value" : "验证演示环境各链接是否活跃"
+  }, {
+    "name" : "suite",
+    "value" : "test_main"
+  }, {
+    "name" : "subSuite",
+    "value" : "TestClass"
+  }, {
+    "name" : "host",
+    "value" : "AliYun"
+  }, {
+    "name" : "thread",
+    "value" : "28865-MainThread"
+  }, {
+    "name" : "framework",
+    "value" : "pytest"
+  }, {
+    "name" : "language",
+    "value" : "cpython3"
+  }, {
+    "name" : "package",
+    "value" : "test_main"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ ],
+  "links" : [ ],
+  "hidden" : true,
+  "retry" : true,
+  "extra" : {
+    "categories" : [ ],
+    "tags" : [ ]
+  },
+  "source" : "b6cf89e918a32be7.json",
+  "parameterValues" : [ ]
+}

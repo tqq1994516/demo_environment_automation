@@ -1,0 +1,29 @@
+[
+  {
+    "name": "跳过用例",
+    "matchedStatuses": ["skipped"]
+  },
+  {
+    "name": "内部原因导致失败用例",
+    "matchedStatuses": ["broken", "failed"],
+    "messageRegex": ".*failed.*"
+  },
+  {
+    "name": "外部原因导致失败用例",
+    "matchedStatuses": ["broken", "failed"],
+    "traceRegx": ".*TimeoutException.*|.*NoSuchElementException.*"
+  },
+  {
+    "name": "过时的用例",
+    "matchedStatuses": ["broken"],
+    "traceRegex": ".*FileNotFoundException.*"
+  },
+  {
+    "name": "失败用例",
+    "matchedStatuses": ["failed"]
+  },
+  {
+    "name": "阻塞用例",
+    "matchedStatuses": ["broken"]
+  }
+]

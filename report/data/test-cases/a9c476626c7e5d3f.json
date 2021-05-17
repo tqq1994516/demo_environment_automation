@@ -1,0 +1,259 @@
+{
+  "uid" : "a9c476626c7e5d3f",
+  "name" : "test_Academic_libraries_demo",
+  "fullName" : "test_main.TestClass#test_Academic_libraries_demo",
+  "historyId" : "854eda620d61100b32fa215388ab7065",
+  "time" : {
+    "start" : 1620958848630,
+    "stop" : 1620958876517,
+    "duration" : 27887
+  },
+  "status" : "broken",
+  "statusMessage" : "selenium.common.exceptions.TimeoutException: Message: /html/body/div[1]/div[2]/div/div/div/div[1]/form/div[1]/input not find",
+  "statusTrace" : "self = <test_main.TestClass object at 0x00000249E450D888>\n\n    @allure.story(load_dict[5]['name'])\n    def test_Academic_libraries_demo(self):\n        username = 'x=>/html/body/div[1]/div[2]/div/div/div/div[1]/form/div[1]/input'\n        username_type, username_value = self.str_split(username)\n        username_text = load_dict[5]['account']\n        pwd = 'x=>/html/body/div[1]/div[2]/div/div/div/div[2]/form/div[2]/input'\n        pwd_type, pwd_value = self.str_split(pwd)\n        pwd_text = load_dict[5]['pwd']\n        btn = 'x=>/html/body/div[1]/div[2]/div/div/div/div[2]/form/button'\n        btn_type, btn_value = self.str_split(btn)\n        browser = BrowserEngine()\n        browser.open_browser(load_dict[5]['url'])\n        driver = BasePage(browser.driver)\n        login_a = 'c=>sign-in'\n        login_a_type, login_a_value = self.str_split(login_a)\n        wait_element(browser.driver, 30, 1, login_a_type, login_a_value)\n        driver.click(login_a)\n        pwd_login_a = 'x=>/html/body/div[1]/div[2]/div/div/ul/li[2]/a'\n        pwd_login_a_type, pwd_login_a_value = self.str_split(pwd_login_a)\n        wait_element(browser.driver, 30, 1, pwd_login_a_type, pwd_login_a_value)\n        driver.click(pwd_login_a)\n>       wait_element(browser.driver, 20, 1, username_type, username_value)\n\ntest_main.py:117: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\nframework\\base_page.py:21: in wait_element\n    wait.until(EC.visibility_of_element_located((By.XPATH, selector)), \"%s not find\" % selector)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <selenium.webdriver.support.wait.WebDriverWait (session=\"e1db6e5e7fbafd8dcb06cfd58033b3c3\")>\nmethod = <selenium.webdriver.support.expected_conditions.visibility_of_element_located object at 0x00000249E4461988>\nmessage = '/html/body/div[1]/div[2]/div/div/div/div[1]/form/div[1]/input not find'\n\n    def until(self, method, message=''):\n        \"\"\"Calls the method provided with the driver as an argument until the \\\n        return value is not False.\"\"\"\n        screen = None\n        stacktrace = None\n    \n        end_time = time.time() + self._timeout\n        while True:\n            try:\n                value = method(self._driver)\n                if value:\n                    return value\n            except self._ignored_exceptions as exc:\n                screen = getattr(exc, 'screen', None)\n                stacktrace = getattr(exc, 'stacktrace', None)\n            time.sleep(self._poll)\n            if time.time() > end_time:\n                break\n>       raise TimeoutException(message, screen, stacktrace)\nE       selenium.common.exceptions.TimeoutException: Message: /html/body/div[1]/div[2]/div/div/div/div[1]/form/div[1]/input not find\n\nC:\\Anaconda3\\envs\\demo_environment_automation\\lib\\site-packages\\selenium\\webdriver\\support\\wait.py:80: TimeoutException",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ ],
+  "testStage" : {
+    "status" : "broken",
+    "statusMessage" : "selenium.common.exceptions.TimeoutException: Message: /html/body/div[1]/div[2]/div/div/div/div[1]/form/div[1]/input not find",
+    "statusTrace" : "self = <test_main.TestClass object at 0x00000249E450D888>\n\n    @allure.story(load_dict[5]['name'])\n    def test_Academic_libraries_demo(self):\n        username = 'x=>/html/body/div[1]/div[2]/div/div/div/div[1]/form/div[1]/input'\n        username_type, username_value = self.str_split(username)\n        username_text = load_dict[5]['account']\n        pwd = 'x=>/html/body/div[1]/div[2]/div/div/div/div[2]/form/div[2]/input'\n        pwd_type, pwd_value = self.str_split(pwd)\n        pwd_text = load_dict[5]['pwd']\n        btn = 'x=>/html/body/div[1]/div[2]/div/div/div/div[2]/form/button'\n        btn_type, btn_value = self.str_split(btn)\n        browser = BrowserEngine()\n        browser.open_browser(load_dict[5]['url'])\n        driver = BasePage(browser.driver)\n        login_a = 'c=>sign-in'\n        login_a_type, login_a_value = self.str_split(login_a)\n        wait_element(browser.driver, 30, 1, login_a_type, login_a_value)\n        driver.click(login_a)\n        pwd_login_a = 'x=>/html/body/div[1]/div[2]/div/div/ul/li[2]/a'\n        pwd_login_a_type, pwd_login_a_value = self.str_split(pwd_login_a)\n        wait_element(browser.driver, 30, 1, pwd_login_a_type, pwd_login_a_value)\n        driver.click(pwd_login_a)\n>       wait_element(browser.driver, 20, 1, username_type, username_value)\n\ntest_main.py:117: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\nframework\\base_page.py:21: in wait_element\n    wait.until(EC.visibility_of_element_located((By.XPATH, selector)), \"%s not find\" % selector)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <selenium.webdriver.support.wait.WebDriverWait (session=\"e1db6e5e7fbafd8dcb06cfd58033b3c3\")>\nmethod = <selenium.webdriver.support.expected_conditions.visibility_of_element_located object at 0x00000249E4461988>\nmessage = '/html/body/div[1]/div[2]/div/div/div/div[1]/form/div[1]/input not find'\n\n    def until(self, method, message=''):\n        \"\"\"Calls the method provided with the driver as an argument until the \\\n        return value is not False.\"\"\"\n        screen = None\n        stacktrace = None\n    \n        end_time = time.time() + self._timeout\n        while True:\n            try:\n                value = method(self._driver)\n                if value:\n                    return value\n            except self._ignored_exceptions as exc:\n                screen = getattr(exc, 'screen', None)\n                stacktrace = getattr(exc, 'stacktrace', None)\n            time.sleep(self._poll)\n            if time.time() > end_time:\n                break\n>       raise TimeoutException(message, screen, stacktrace)\nE       selenium.common.exceptions.TimeoutException: Message: /html/body/div[1]/div[2]/div/div/div/div[1]/form/div[1]/input not find\n\nC:\\Anaconda3\\envs\\demo_environment_automation\\lib\\site-packages\\selenium\\webdriver\\support\\wait.py:80: TimeoutException",
+    "steps" : [ {
+      "name" : "打开浏览器",
+      "time" : {
+        "start" : 1620958849680,
+        "stop" : 1620958855438,
+        "duration" : 5758
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "80a5b723d736f18c",
+        "name" : "操作信息",
+        "source" : "80a5b723d736f18c.attach",
+        "type" : "text/plain",
+        "size" : 157
+      } ],
+      "parameters" : [ {
+        "name" : "url",
+        "value" : "'http://xsdc2.casdc.com/widgets/Encyclopedia_PC'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "等待元素",
+      "time" : {
+        "start" : 1620958855438,
+        "stop" : 1620958855455,
+        "duration" : 17
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "af9f45a06fa311",
+        "name" : "操作信息",
+        "source" : "af9f45a06fa311.attach",
+        "type" : "text/plain",
+        "size" : 73
+      } ],
+      "parameters" : [ {
+        "name" : "driver",
+        "value" : "<selenium.webdriver.chrome.webdriver.WebDriver (session=\"e1db6e5e7fbafd8dcb06cfd58033b3c3\")>"
+      }, {
+        "name" : "wait_time",
+        "value" : "30"
+      }, {
+        "name" : "step",
+        "value" : "1"
+      }, {
+        "name" : "selector_tpye",
+        "value" : "'c'"
+      }, {
+        "name" : "selector",
+        "value" : "'sign-in'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "点击元素",
+      "time" : {
+        "start" : 1620958855455,
+        "stop" : 1620958855802,
+        "duration" : 347
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "31e6804ec390b2fe",
+        "name" : "操作信息",
+        "source" : "31e6804ec390b2fe.attach",
+        "type" : "text/plain",
+        "size" : 33
+      } ],
+      "parameters" : [ {
+        "name" : "selector",
+        "value" : "'c=>sign-in'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "等待元素",
+      "time" : {
+        "start" : 1620958855802,
+        "stop" : 1620958855825,
+        "duration" : 23
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "6982a7843db9a381",
+        "name" : "操作信息",
+        "source" : "6982a7843db9a381.attach",
+        "type" : "text/plain",
+        "size" : 109
+      } ],
+      "parameters" : [ {
+        "name" : "driver",
+        "value" : "<selenium.webdriver.chrome.webdriver.WebDriver (session=\"e1db6e5e7fbafd8dcb06cfd58033b3c3\")>"
+      }, {
+        "name" : "wait_time",
+        "value" : "30"
+      }, {
+        "name" : "step",
+        "value" : "1"
+      }, {
+        "name" : "selector_tpye",
+        "value" : "'x'"
+      }, {
+        "name" : "selector",
+        "value" : "'/html/body/div[1]/div[2]/div/div/ul/li[2]/a'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "点击元素",
+      "time" : {
+        "start" : 1620958855825,
+        "stop" : 1620958855879,
+        "duration" : 54
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "49cc3250e11e4fbc",
+        "name" : "操作信息",
+        "source" : "49cc3250e11e4fbc.attach",
+        "type" : "text/plain",
+        "size" : 69
+      } ],
+      "parameters" : [ {
+        "name" : "selector",
+        "value" : "'x=>/html/body/div[1]/div[2]/div/div/ul/li[2]/a'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "等待元素",
+      "time" : {
+        "start" : 1620958855879,
+        "stop" : 1620958876517,
+        "duration" : 20638
+      },
+      "status" : "broken",
+      "statusMessage" : "selenium.common.exceptions.TimeoutException: Message: /html/body/div[1]/div[2]/div/div/div/div[1]/form/div[1]/input not find\n\n",
+      "statusTrace" : "  File \"C:\\Anaconda3\\envs\\demo_environment_automation\\lib\\site-packages\\allure_commons\\_allure.py\", line 172, in impl\n    return func(*a, **kw)\n  File \"C:\\projects\\py-project\\demo_environment_automation\\framework\\base_page.py\", line 21, in wait_element\n    wait.until(EC.visibility_of_element_located((By.XPATH, selector)), \"%s not find\" % selector)\n  File \"C:\\Anaconda3\\envs\\demo_environment_automation\\lib\\site-packages\\selenium\\webdriver\\support\\wait.py\", line 80, in until\n    raise TimeoutException(message, screen, stacktrace)\n",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "cb5675ea1349ef1c",
+        "name" : "操作信息",
+        "source" : "cb5675ea1349ef1c.attach",
+        "type" : "text/plain",
+        "size" : 127
+      } ],
+      "parameters" : [ {
+        "name" : "driver",
+        "value" : "<selenium.webdriver.chrome.webdriver.WebDriver (session=\"e1db6e5e7fbafd8dcb06cfd58033b3c3\")>"
+      }, {
+        "name" : "wait_time",
+        "value" : "20"
+      }, {
+        "name" : "step",
+        "value" : "1"
+      }, {
+        "name" : "selector_tpye",
+        "value" : "'x'"
+      }, {
+        "name" : "selector",
+        "value" : "'/html/body/div[1]/div[2]/div/div/div/div[1]/form/div[1]/input'"
+      } ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : true,
+      "hasContent" : true
+    } ],
+    "attachments" : [ {
+      "uid" : "baf668132e02bb04",
+      "name" : "log",
+      "source" : "baf668132e02bb04.txt",
+      "type" : "text/plain",
+      "size" : 887
+    } ],
+    "parameters" : [ ],
+    "stepsCount" : 6,
+    "attachmentsCount" : 7,
+    "shouldDisplayMessage" : true,
+    "hasContent" : true
+  },
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "feature",
+    "value" : "验证演示环境各链接是否活跃"
+  }, {
+    "name" : "story",
+    "value" : "学术典藏demo"
+  }, {
+    "name" : "suite",
+    "value" : "test_main"
+  }, {
+    "name" : "subSuite",
+    "value" : "TestClass"
+  }, {
+    "name" : "host",
+    "value" : "QIR5PKO"
+  }, {
+    "name" : "thread",
+    "value" : "9436-MainThread"
+  }, {
+    "name" : "framework",
+    "value" : "pytest"
+  }, {
+    "name" : "language",
+    "value" : "cpython3"
+  }, {
+    "name" : "package",
+    "value" : "test_main"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ ],
+  "links" : [ ],
+  "hidden" : true,
+  "retry" : true,
+  "extra" : {
+    "categories" : [ ],
+    "tags" : [ ]
+  },
+  "source" : "a9c476626c7e5d3f.json",
+  "parameterValues" : [ ]
+}

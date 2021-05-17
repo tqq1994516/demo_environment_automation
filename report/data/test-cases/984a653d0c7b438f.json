@@ -1,0 +1,113 @@
+{
+  "uid" : "984a653d0c7b438f",
+  "name" : "test_Sichuan_Vocational_College_of_Mechanical_and_Electrical_Technology_demo",
+  "fullName" : "test_main.TestClass#test_Sichuan_Vocational_College_of_Mechanical_and_Electrical_Technology_demo",
+  "historyId" : "efbd48587e6dca6291a7b500b6c1127c",
+  "time" : {
+    "start" : 1621221420844,
+    "stop" : 1621221420844,
+    "duration" : 0
+  },
+  "status" : "broken",
+  "statusMessage" : "TypeError: str_split() missing 1 required positional argument: 's'",
+  "statusTrace" : "self = <test_main.TestClass object at 0x7f9d76e61250>\n\n    @allure.story(load_dict[11]['name'])\n    def test_Sichuan_Vocational_College_of_Mechanical_and_Electrical_Technology_demo(self):\n        username = 'n=>username'\n        pwd = 'n=>userpass'\n        btn = 'c=>login-form-btn'\n        assert_element = 'c=>head_litterTitle'\n>       self.verify(11, username, pwd, btn, assert_element)\n\ntest_main.py:181: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <test_main.TestClass object at 0x7f9d76e61250>, index = 11, username = 'n=>username', pwd = 'n=>userpass', btn = 'c=>login-form-btn', ass_el = 'c=>head_litterTitle'\n\n    def verify(self, index, username, pwd, btn, ass_el):\n>       username_type, username_value = TestClass.str_split(username)\nE       TypeError: str_split() missing 1 required positional argument: 's'\n\ntest_main.py:32: TypeError",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ {
+    "name" : "xunit_setup_class_fixture_TestClass",
+    "time" : {
+      "start" : 1621221416785,
+      "stop" : 1621221418028,
+      "duration" : 1243
+    },
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "stepsCount" : 0,
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "hasContent" : false
+  } ],
+  "testStage" : {
+    "status" : "broken",
+    "statusMessage" : "TypeError: str_split() missing 1 required positional argument: 's'",
+    "statusTrace" : "self = <test_main.TestClass object at 0x7f9d76e61250>\n\n    @allure.story(load_dict[11]['name'])\n    def test_Sichuan_Vocational_College_of_Mechanical_and_Electrical_Technology_demo(self):\n        username = 'n=>username'\n        pwd = 'n=>userpass'\n        btn = 'c=>login-form-btn'\n        assert_element = 'c=>head_litterTitle'\n>       self.verify(11, username, pwd, btn, assert_element)\n\ntest_main.py:181: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <test_main.TestClass object at 0x7f9d76e61250>, index = 11, username = 'n=>username', pwd = 'n=>userpass', btn = 'c=>login-form-btn', ass_el = 'c=>head_litterTitle'\n\n    def verify(self, index, username, pwd, btn, ass_el):\n>       username_type, username_value = TestClass.str_split(username)\nE       TypeError: str_split() missing 1 required positional argument: 's'\n\ntest_main.py:32: TypeError",
+    "steps" : [ ],
+    "attachments" : [ {
+      "uid" : "3bc05fe27bb07be2",
+      "name" : "log",
+      "source" : "3bc05fe27bb07be2.txt",
+      "type" : "text/plain",
+      "size" : 65
+    }, {
+      "uid" : "2950bd1a0130c80d",
+      "name" : "stderr",
+      "source" : "2950bd1a0130c80d.txt",
+      "type" : "text/plain",
+      "size" : 67
+    } ],
+    "parameters" : [ ],
+    "stepsCount" : 0,
+    "attachmentsCount" : 2,
+    "shouldDisplayMessage" : true,
+    "hasContent" : true
+  },
+  "afterStages" : [ {
+    "name" : "xunit_setup_class_fixture_TestClass::0",
+    "time" : {
+      "start" : 1621221420861,
+      "stop" : 1621221420919,
+      "duration" : 58
+    },
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "stepsCount" : 0,
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "hasContent" : false
+  } ],
+  "labels" : [ {
+    "name" : "story",
+    "value" : "四川机电职业技术学院"
+  }, {
+    "name" : "feature",
+    "value" : "验证演示环境各链接是否活跃"
+  }, {
+    "name" : "suite",
+    "value" : "test_main"
+  }, {
+    "name" : "subSuite",
+    "value" : "TestClass"
+  }, {
+    "name" : "host",
+    "value" : "AliYun"
+  }, {
+    "name" : "thread",
+    "value" : "26925-MainThread"
+  }, {
+    "name" : "framework",
+    "value" : "pytest"
+  }, {
+    "name" : "language",
+    "value" : "cpython3"
+  }, {
+    "name" : "package",
+    "value" : "test_main"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ ],
+  "links" : [ ],
+  "hidden" : true,
+  "retry" : true,
+  "extra" : {
+    "categories" : [ ],
+    "tags" : [ ]
+  },
+  "source" : "984a653d0c7b438f.json",
+  "parameterValues" : [ ]
+}
