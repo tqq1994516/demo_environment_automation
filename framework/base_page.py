@@ -237,7 +237,7 @@ class BasePage(object):
         allure.attach('获取值:{} '.format(self.driver.current_url), "操作信息")
         return self.driver.current_url
 
-    # 获取新标签
+    # 获取新标签（未完成）
     @allure.step("获取新标签页")
     def get_new_tab(self, url, selector):
         allure.attach('定位类型:{}; 定位值:{}'.format(selector.split('=>')[0], selector.split('=>')[1]), "操作信息")
