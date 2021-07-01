@@ -12,9 +12,9 @@ logger = Logger(logger="BrowserEngine").getlog()
 class BrowserEngine(object):
     # read the browser type from config.ini file, return the driver
     config = configparser.ConfigParser()
-    config.read(os.getcwd() + '/config/config.ini')
+    config.read(os.getcwd() + '/config/config.ini', encoding='utf-8')
     browser = config.get("browserType", "browserName")
-    browser_dir_path = os.getcwd() + '/driver/' + browser + 'driver'
+    browser_dir_path = os.getcwd() + '/driver/' + browser + 'driver.exe'
     driver = None
 
     def __init__(self):
@@ -27,8 +27,8 @@ class BrowserEngine(object):
         self.option.add_argument('-disable-gpu')
         self.option.add_argument('-no-sandbox')
         if self.browser == 'chrome':
-            self.driver = webdriver.Chrome(executable_path=BrowserEngine.browser_dir_path, options=self.option)  # 无窗口测试
-            # self.driver = webdriver.Chrome(executable_path=BrowserEngine.browser_dir_path)
+            # self.driver = webdriver.Chrome(executable_path=BrowserEngine.browser_dir_path, options=self.option)  # 无窗口测试
+            self.driver = webdriver.Chrome(executable_path=BrowserEngine.browser_dir_path)
             logger.info("Starting Chrome browser.")
         elif self.browser == 'firefox':
             # self.driver = webdriver.Firefox(executable_path=BrowserEngine.browser_dir_path, options=self.option)  # 无窗口测试

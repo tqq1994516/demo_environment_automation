@@ -1,40 +1,19 @@
 # coding=utf-8
 import os
 import time
-
+import win32clipboard as WC
 import allure
+import win32api
+import win32con
 from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException, ElementNotSelectableException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from framework.logger import Logger
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 
 # create a logger instance
 logger = Logger(logger="BasePage").getlog()
-
-
-@allure.step("等待元素")
-def wait_element(driver, wait_time, step, selector_type, selector):
-    allure.attach('等待时长:{}(s); 间隔时长:{}(s); 定位类型:{}; 定位值:{};'.format(wait_time, step, selector_type, selector), "操作信息")
-    wait = WebDriverWait(driver, wait_time, poll_frequency=step,
-                         ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException])
-    if selector_type == 'x':
-        wait.until(EC.visibility_of_element_located((By.XPATH, selector)), "%s not find" % selector)
-    elif selector_type == 'n':
-        wait.until(EC.visibility_of_element_located((By.NAME, selector)), "%s not find" % selector)
-    elif selector_type == 'c':
-        wait.until(EC.presence_of_element_located((By.CLASS_NAME, selector)), "%s not find" % selector)
-    elif selector_type == 'i':
-        wait.until(EC.presence_of_element_located((By.ID, selector)), "%s not find" % selector)
-    elif selector_type == 's':
-        wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector)), "%s not find" % selector)
-
-
-def sleep(seconds):
-    time.sleep(seconds)
-    logger.info("Sleep for %d seconds" % seconds)
 
 
 class BasePage(object):
@@ -45,28 +24,44 @@ class BasePage(object):
     def __init__(self, driver):
         self.driver = driver
 
-    # quit browser and end testing
     def quit_browser(self):
+        """
+        退出浏览器，测试结束执行此函数而close_browser
+        :return:
+        """
         logger.info("The browser will quit")
         self.driver.quit()
 
-    # 浏览器前进操作
     def forward(self):
+        """
+        浏览器前进操作
+        :return:
+        """
         self.driver.forward()
         logger.info("Click forward on current page.")
 
-    # 浏览器后退操作
     def back(self):
+        """
+        浏览器后退操作
+        :return:
+        """
         self.driver.back()
         logger.info("Click back on current page.")
 
-    # 隐式等待
     def wait(self, seconds):
+        """
+        隐式等待
+        :param seconds: 隐式等待秒数
+        :return:
+        """
         self.driver.implicitly_wait(seconds)
         logger.info("wait for %d seconds." % seconds)
 
-    # 点击关闭当前窗口
     def close(self):
+        """
+        点击关闭当前窗口
+        :return:
+        """
         try:
             self.driver.close()
             logger.info("Closing and close the browser.")
@@ -93,6 +88,42 @@ class BasePage(object):
             logger.error("Failed to take screenshot! %s" % e)
             self.save_img()
 
+    @allure.step("等待元素")
+    def wait_element(self, wait_time, step, selector):
+        """
+        每个setp秒就向当前页面查询元素是否存在，存在执行后续动作，超过最大等待时间抛出timeout异常
+        :param wait_time: 最大等待时间
+        :param step: 查询间隔
+        :param selector: selenium选择器，以"x=>path"形式传递，详见find_element()
+        :return:
+        """
+        selector_type = selector.split('=>')[0]
+        selector_value = selector.split('=>')[1]
+        allure.attach('等待时长:{}(s); 间隔时长:{}(s); 定位类型:{}; 定位值:{};'.format(wait_time, step, selector_type, selector_value),
+                      "操作信息")
+        wait = WebDriverWait(self.driver, wait_time, poll_frequency=step,
+                             ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException])
+        if selector_type == 'x':
+            wait.until(EC.visibility_of_element_located((By.XPATH, selector_value)), "%s not find" % selector_value)
+        elif selector_type == 'n':
+            wait.until(EC.visibility_of_element_located((By.NAME, selector_value)), "%s not find" % selector_value)
+        elif selector_type == 'c':
+            wait.until(EC.presence_of_element_located((By.CLASS_NAME, selector_value)), "%s not find" % selector_value)
+        elif selector_type == 'i':
+            wait.until(EC.presence_of_element_located((By.ID, selector_value)), "%s not find" % selector_value)
+        elif selector_type == 's':
+            wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector_value)),
+                       "%s not find" % selector_value)
+
+    def sleep(self, seconds):
+        """
+
+        :param seconds: 强制等待秒数
+        :return:
+        """
+        time.sleep(seconds)
+        logger.info("Sleep for %d seconds" % seconds)
+
     # 定位元素方法
     def find_element(self, selector):
         """
@@ -100,8 +131,8 @@ class BasePage(object):
          submit_btn = "id=>su"
          login_lnk = "xpath => //*[@id='u1']/a[7]"  # 百度首页登录链接定位
          如果采用等号，结果很多xpath表达式中包含一个=，这样会造成切割不准确，影响元素定位
-        :param selector
-        :return: element
+        :param selector： selenium选择器，以"x=>path"形式传递，详见find_element()
+        :return: element：返回选择器指向的html element
         """
         element = ''
         if '=>' not in selector:
@@ -180,6 +211,12 @@ class BasePage(object):
     # 输入
     @allure.step("输入信息")
     def enter(self, selector, text):
+        """
+
+        :param selector: selenium选择器，以"x=>path"形式传递，详见find_element()
+        :param text: 向input中输入的内容
+        :return:
+        """
         allure.attach('定位类型:{}; 定位值:{}; 输入值:{}'.format(selector.split('=>')[0], selector.split('=>')[1], text), "操作信息")
         el = self.find_element(selector)
         try:
@@ -192,6 +229,11 @@ class BasePage(object):
     # 清除文本框
     @allure.step("清空元素")
     def clear(self, selector):
+        """
+
+        :param selector: selenium选择器，以"x=>path"形式传递，详见find_element()
+        :return:
+        """
         allure.attach('定位类型:{}; 定位值:{}'.format(selector.split('=>')[0], selector.split('=>')[1]), "操作信息")
         el = self.find_element(selector)
         try:
@@ -204,6 +246,11 @@ class BasePage(object):
     # 点击元素
     @allure.step("点击元素")
     def click(self, selector):
+        """
+
+        :param selector: selenium选择器，以"x=>path"形式传递，详见find_element()
+        :return:
+        """
         allure.attach('定位类型:{}; 定位值:{}'.format(selector.split('=>')[0], selector.split('=>')[1]), "操作信息")
         el = self.find_element(selector)
         try:
@@ -215,6 +262,12 @@ class BasePage(object):
     # 调用js操作
     @allure.step("调用js操作")
     def es(self, js, selector=None):
+        """
+        Example: self.driver.es("arguments[0].click();", pwd_login_a), 其中arguments[0]为固定写法代表第二个参数选择器指向的html element，arguments[0]方法需要写原生支持js方法
+        :param js: js语句
+        :param selector: selenium选择器，以"x=>path"形式传递，详见find_element()
+        :return:
+        """
         try:
             if selector:
                 allure.attach('定位类型:{}; 定位值:{}'.format(selector.split('=>')[0], selector.split('=>')[1]), "操作信息")
@@ -229,6 +282,11 @@ class BasePage(object):
     # 获取元素内容
     @allure.step("获取元素内容")
     def get_element_text(self, selector):
+        """
+
+        :param selector: selenium选择器，以"x=>path"形式传递，详见find_element()
+        :return: 返回元素text
+        """
         el_text = self.find_element(selector).text
         allure.attach('定位类型:{}; 定位值:{}; 获取值:{} '.format(selector.split('=>')[0], selector.split('=>')[1], el_text),
                       "操作信息")
@@ -237,6 +295,10 @@ class BasePage(object):
     # 获取网页标题
     @allure.step("获取网页标题")
     def get_page_title(self):
+        """
+
+        :return: 返回当前网页title
+        """
         logger.info("Current page title is %s" % self.driver.title)
         allure.attach('获取值:{} '.format(self.driver.title), "操作信息")
         return self.driver.title
@@ -244,12 +306,22 @@ class BasePage(object):
     # 获取网页URL
     @allure.step("获取网页URL")
     def get_page_url(self):
+        """
+
+        :return: 返回当前网页url
+        """
         logger.info("Current page title is %s" % self.driver.current_url)
         allure.attach('获取值:{} '.format(self.driver.current_url), "操作信息")
         return self.driver.current_url
 
     @allure.step("获取新标签页或窗口")
     def get_new_tab(self, url, type):
+        """
+
+        :param url: 新开启网址
+        :param type: 传递"tab"或"window",tab创建新标签，window创建新窗口
+        :return:
+        """
         allure.attach('类型:{}; url:{}'.format(type, url), "操作信息")
         # 存储原始窗口的 ID
         self.original_window = self.driver.current_window_handle
@@ -288,6 +360,7 @@ class BasePage(object):
 
     @allure.step("切回之前的窗口或标签")
     def switch_original_window(self):
+        """切回之前的窗口或标签"""
         if self.original_window:
             self.driver.switch_to.window(self.original_window)
         else:
@@ -308,4 +381,125 @@ class BasePage(object):
 
     @allure.step("退出iframe")
     def quit_iframe(self):
+        """退出iframe"""
         self.driver.switch_to.default_context()
+
+
+class UploadFile(object):
+    """
+    上传文件， 通过将文件传至剪切板后上传窗体中粘贴实现选择文件
+    """
+    # 键盘码
+    vk_code = {
+        'enter': 0x0D,
+        'ctrl': 0x11,
+        'v': 0x56,
+        'a': 0x41,
+        'f4': 0x73,
+        'tab': 0x09
+    }
+
+    @allure.step("按下按键")
+    def keyDown(self, key_name):
+        """
+        按下按键
+        :param key_name: 按下键可选：enter、ctrl、v
+        :return:
+        """
+        allure.attach('按键值:{}'.format(key_name), "操作信息")
+        key_name = key_name.lower()
+        try:
+            win32api.keybd_event(self.vk_code[key_name], 0, 0, 0)
+        except Exception as e:
+            print('未按下enter键')
+            raise e
+
+    @allure.step("抬起按键")
+    def keyUp(self, key_name):
+        """
+        抬起按键
+        :param key_name: 按下键可选：enter、ctrl、v
+        :return:
+        """
+        allure.attach('按键值:{}'.format(key_name), "操作信息")
+        key_name = key_name.lower()
+        win32api.keybd_event(self.vk_code[key_name], 0, win32con.KEYEVENTF_KEYUP, 0)
+
+    @allure.step("模拟单个按键")
+    def oneKey(self, key):
+        """
+        模拟单个按键
+        :param key: 按下键可选：enter、ctrl、v
+        :return:
+        """
+        allure.attach('按键值:{}'.format(key), "操作信息")
+        key = key.lower()
+        self.keyDown(key)
+        time.sleep(2)
+        self.keyUp(key)
+
+    @allure.step("模拟组合按键")
+    def twoKeys(self, key1, key2):
+        """
+        模拟组合按键， 模拟ctrl+v， key1传ctrl，key2传v
+        :param key1: 按下键可选：enter、ctrl、v
+        :param key2: 按下键可选：enter、ctrl、v
+        :return:
+        """
+        allure.attach('按键值1:{}; 按键值1:{}'.format(key1, key2), "操作信息")
+        key1 = key1.lower()
+        key2 = key2.lower()
+        self.keyDown(key1)
+        self.keyDown(key2)
+        self.keyUp(key2)
+        self.keyUp(key1)
+
+    @allure.step("获取剪切板的内容")
+    def getText(self):
+        """
+        获取剪切板的内容
+        :return: 返回剪切板第一个内容
+        """
+        WC.OpenClipboard()
+        value = WC.GetClipboardData(win32con.CF_TEXT)
+        WC.CloseClipboard()
+        allure.attach('获取内容为:{}'.format(value), "操作信息")
+        return value
+
+    @allure.step("设置剪切板的内容")
+    def setText(self, value):
+        """
+        设置剪切板的内容
+        :param value: 上传文件绝对路径
+        :return:
+        """
+        allure.attach('设置内容为:{}'.format(value), "操作信息")
+        WC.OpenClipboard()
+        WC.EmptyClipboard()
+        WC.SetClipboardData(win32con.CF_UNICODETEXT, value)
+        WC.CloseClipboard()
+
+    @allure.step("上传文件")
+    def upload_file(self, file_path, file_name):
+        """
+        通过将文件路径设置至剪切板，在上传窗体依次进行ctrl+v、enter的模拟键盘操作，实现选择文件、确认操作
+        :param key1: 默认ctrl
+        :param key2: 默认v
+        :param key3: 默认enter
+        :return:
+        """
+        allure.attach('上传文件为:{}'.format(file_path), "操作信息")
+        self.setText(file_path)
+        self.oneKey('f4')
+        self.twoKeys('ctrl', 'a')
+        self.twoKeys('ctrl', 'v')
+        self.oneKey('enter')
+        self.oneKey('tab')
+        self.oneKey('tab')
+        self.oneKey('tab')
+        self.oneKey('tab')
+        self.oneKey('tab')
+        self.oneKey('tab')
+        self.setText(file_name)
+        self.twoKeys('ctrl', 'v')
+        self.oneKey('enter')

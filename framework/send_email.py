@@ -10,7 +10,7 @@ from email.header import Header
 def send_email(file):
     config = configparser.ConfigParser()
     file_path = os.getcwd() + '/config/config.ini'
-    config.read(file_path)
+    config.read(file_path, encoding='utf-8')
     email_host = config.get("emailInfo", "email_host")
     send_user = config.get("emailInfo", "send_user")
     password = config.get("emailInfo", "password")
