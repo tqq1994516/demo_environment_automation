@@ -8,11 +8,12 @@ if [ -n "$PID" ];then
     echo "`date +%F%H%M%S` testReport service $PID is running, stop it"
     kill -9 $PID
 fi
-echo "`date +%F%H%M%S` start clear out [*.html] and [*.attach] and [*.json] and [*.log] files at demo_environment_automation/result/ and demo_environment_automation/html/ and demo_enviroment_automation/logs/ ten days ago"
+echo "`date +%F%H%M%S` start clear out [*.html] and [*.attach] and [*.json] and [*.log] files at
+demo_environment_automation/result/ and demo_environment_automation/html/ and demo_enviroment_automation/logs/ ten days ago"
 find /root/ceshibu/demo_environment_automation/result -mtime +10 -name "*-attachment.attach" -exec rm -rf {} \;
 find /root/ceshibu/demo_environment_automation/result -mtime +10 -name "*-result.json" -exec rm -rf {} \;
 find /root/ceshibu/demo_environment_automation/html -mtime +10 -name "*.html" -exec rm -rf {} \;
-find /root/ceshibu/demo_environment_automation/logs -mtime +10 -name "*.log" -exec rm -rf {}\;
+find /root/ceshibu/demo_environment_automation/logs -mtime +10 -name "*.log" -exec rm -rf {} \;
 echo "clear over"
 source /root/anaconda3/bin/activate demo_env_autotest
 cd /root/ceshibu/demo_environment_automation

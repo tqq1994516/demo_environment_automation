@@ -16,19 +16,21 @@ logger = Logger(logger="BasePage").getlog()
 
 
 @allure.step("等待元素")
-def wait_element(driver, wait_time, step, selector_tpye, selector):
-    allure.attach('等待时长:{}(s); 间隔时长:{}(s); 定位类型:{}; 定位值:{};'.format(wait_time, step, selector_tpye, selector), "操作信息")
-    wait = WebDriverWait(driver, wait_time, poll_frequency=step, ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException])
-    if selector_tpye == 'x':
+def wait_element(driver, wait_time, step, selector_type, selector):
+    allure.attach('等待时长:{}(s); 间隔时长:{}(s); 定位类型:{}; 定位值:{};'.format(wait_time, step, selector_type, selector), "操作信息")
+    wait = WebDriverWait(driver, wait_time, poll_frequency=step,
+                         ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException])
+    if selector_type == 'x':
         wait.until(EC.visibility_of_element_located((By.XPATH, selector)), "%s not find" % selector)
-    elif selector_tpye == 'n':
+    elif selector_type == 'n':
         wait.until(EC.visibility_of_element_located((By.NAME, selector)), "%s not find" % selector)
-    elif selector_tpye == 'c':
+    elif selector_type == 'c':
         wait.until(EC.presence_of_element_located((By.CLASS_NAME, selector)), "%s not find" % selector)
-    elif selector_tpye == 'i':
+    elif selector_type == 'i':
         wait.until(EC.presence_of_element_located((By.ID, selector)), "%s not find" % selector)
-    elif selector_tpye == 's':
+    elif selector_type == 's':
         wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector)), "%s not find" % selector)
+
 
 def sleep(seconds):
     time.sleep(seconds)
@@ -45,7 +47,7 @@ class BasePage(object):
 
     # quit browser and end testing
     def quit_browser(self):
-        logger.info("The browser will close")
+        logger.info("The browser will quit")
         self.driver.quit()
 
     # 浏览器前进操作
@@ -67,9 +69,9 @@ class BasePage(object):
     def close(self):
         try:
             self.driver.close()
-            logger.info("Closing and quit the browser.")
+            logger.info("Closing and close the browser.")
         except NameError as e:
-            logger.error("Failed to quit the browser with %s" % e)
+            logger.error("Failed to close the browser with %s" % e)
 
     # 保存图片
     def save_img(self):
@@ -110,56 +112,64 @@ class BasePage(object):
         if selector_by == "i" or selector_by == 'id':
             try:
                 element = self.driver.find_element_by_id(selector_value)
-                logger.info("Had find the element {} successful by {} via value: {} ".format(element.text, selector_by, selector_value))
+                logger.info("Had find the element {} successful by {} via value: {} ".format(element.text, selector_by,
+                                                                                             selector_value))
             except NoSuchElementException as e:
                 logger.error("NoSuchElementException: %s" % e)
                 # self.save_img()  # take screenshot
         elif selector_by == "n" or selector_by == 'name':
             try:
                 element = self.driver.find_element_by_name(selector_value)
-                logger.info("Had find the element {} successful by {} via value: {} ".format(element.text, selector_by, selector_value))
+                logger.info("Had find the element {} successful by {} via value: {} ".format(element.text, selector_by,
+                                                                                             selector_value))
             except NoSuchElementException as e:
                 logger.error("NoSuchElementException: %s" % e)
                 # self.save_img()  # take screenshot
         elif selector_by == "c" or selector_by == 'class_name':
             try:
                 element = self.driver.find_element_by_class_name(selector_value)
-                logger.info("Had find the element {} successful by {} via value: {} ".format(element.text, selector_by, selector_value))
+                logger.info("Had find the element {} successful by {} via value: {} ".format(element.text, selector_by,
+                                                                                             selector_value))
             except NoSuchElementException as e:
                 logger.error("NoSuchElementException: %s" % e)
                 # self.save_img()  # take screenshot
         elif selector_by == "l" or selector_by == 'link_text':
             try:
                 element = self.driver.find_element_by_link_text(selector_value)
-                logger.info("Had find the element {} successful by {} via value: {} ".format(element.text, selector_by, selector_value))
+                logger.info("Had find the element {} successful by {} via value: {} ".format(element.text, selector_by,
+                                                                                             selector_value))
             except NoSuchElementException as e:
                 logger.error("NoSuchElementException: %s" % e)
                 # self.save_img()  # take screenshot
         elif selector_by == "p" or selector_by == 'partial_link_text':
             try:
                 element = self.driver.find_element_by_partial_link_text(selector_value)
-                logger.info("Had find the element {} successful by {} via value: {} ".format(element.text, selector_by, selector_value))
+                logger.info("Had find the element {} successful by {} via value: {} ".format(element.text, selector_by,
+                                                                                             selector_value))
             except NoSuchElementException as e:
                 logger.error("NoSuchElementException: %s" % e)
                 # self.save_img()  # take screenshot
         elif selector_by == "t" or selector_by == 'tag_name':
             try:
                 element = self.driver.find_element_by_tag_name(selector_value)
-                logger.info("Had find the element {} successful by {} via value: {} ".format(element.text, selector_by, selector_value))
+                logger.info("Had find the element {} successful by {} via value: {} ".format(element.text, selector_by,
+                                                                                             selector_value))
             except NoSuchElementException as e:
                 logger.error("NoSuchElementException: %s" % e)
                 # self.save_img()  # take screenshot
         elif selector_by == "x" or selector_by == 'xpath':
             try:
                 element = self.driver.find_element_by_xpath(selector_value)
-                logger.info("Had find the element {} successful by {} via value: {} ".format(element.text, selector_by, selector_value))
+                logger.info("Had find the element {} successful by {} via value: {} ".format(element.text, selector_by,
+                                                                                             selector_value))
             except NoSuchElementException as e:
                 logger.error("NoSuchElementException: %s" % e)
                 # self.save_img()  # take screenshot
         elif selector_by == "s" or selector_by == 'selector_selector':
             try:
                 element = self.driver.find_element_by_css_selector(selector_value)
-                logger.info("Had find the element {} successful by {} via value: {} ".format(element.text, selector_by, selector_value))
+                logger.info("Had find the element {} successful by {} via value: {} ".format(element.text, selector_by,
+                                                                                             selector_value))
             except NoSuchElementException as e:
                 logger.error("NoSuchElementException: %s" % e)
                 # self.save_img()  # take screenshot
@@ -220,7 +230,8 @@ class BasePage(object):
     @allure.step("获取元素内容")
     def get_element_text(self, selector):
         el_text = self.find_element(selector).text
-        allure.attach('定位类型:{}; 定位值:{}; 获取值:{} '.format(selector.split('=>')[0], selector.split('=>')[1], el_text), "操作信息")
+        allure.attach('定位类型:{}; 定位值:{}; 获取值:{} '.format(selector.split('=>')[0], selector.split('=>')[1], el_text),
+                      "操作信息")
         return el_text
 
     # 获取网页标题
@@ -237,12 +248,63 @@ class BasePage(object):
         allure.attach('获取值:{} '.format(self.driver.current_url), "操作信息")
         return self.driver.current_url
 
-    # 获取新标签（未完成）
-    @allure.step("获取新标签页")
-    def get_new_tab(self, url, selector):
-        allure.attach('定位类型:{}; 定位值:{}'.format(selector.split('=>')[0], selector.split('=>')[1]), "操作信息")
-        el = self.find_element(selector)
-        actions = ActionChains(self.driver)
-        actions.key_down(Keys.CONTROL).send_keys("t").key_up(Keys.CONTROL).perform()
-        self.driver.switch_to.window(self.driver.window_handles[-1])
+    @allure.step("获取新标签页或窗口")
+    def get_new_tab(self, url, type):
+        allure.attach('类型:{}; url:{}'.format(type, url), "操作信息")
+        # 存储原始窗口的 ID
+        self.original_window = self.driver.current_window_handle
+        if type == 'tab':
+            # 打开新标签页并切换到新标签页
+            self.driver.switch_to.new_window('tab')
+        else:
+            self.driver.switch_to.new_window('tab')
+        # 循环执行，直到找到一个新的窗口句柄
+        for window_handle in self.driver.window_handles:
+            if window_handle != self.original_window:
+                self.driver.switch_to.window(window_handle)
+                break
         self.driver.get(url)
+
+    @allure.step("滑动滑块")
+    def move_slider(self, target_selector, source_selector=None, x=None, y=None):
+        el = self.find_element(target_selector)
+        actions = ActionChains(self.driver)
+        if source_selector:
+            allure.attach('源元素定位类型:{}; 源元素定位值:{}; 目标元素定位类型:{}; 目标元素定位值:{}'.format(source_selector.split('=>')[0],
+                                                                                  source_selector.split('=>')[1],
+                                                                                  target_selector.split('=>')[0],
+                                                                                  target_selector.split('=>')[1]),
+                          "操作信息")
+            elX = el.location.get('x')
+            elY = el.location.get('y')
+            actions.move_by_offset(elX, elY).perform()
+        else:
+            allure.attach('目标元素定位类型:{}; 目标元素定位值:{}; 滑动距离(x:{},y:{})'.format(target_selector.split('=>')[0],
+                                                                            target_selector.split('=>')[1], x, y),
+                          "操作信息")
+            actions.move_by_offset(x, y).perform()
+        actions.release().perform()
+
+    @allure.step("切回之前的窗口或标签")
+    def switch_original_window(self):
+        if self.original_window:
+            self.driver.switch_to.window(self.original_window)
+        else:
+            self.driver.switch_to.window(self.driver.window_handles[-1])
+
+    @allure.step("切换iframe")
+    def switch_iframe(self, iframe_id=None, iframe_index=None, selector=None):
+        if iframe_id:
+            allure.attach('切换iframe_id:{}'.format(iframe_id), "操作信息")
+            self.driver.switch_to.frame(iframe_id)
+        elif iframe_index:
+            allure.attach('切换iframe_index:{}'.format(iframe_index), "操作信息")
+            self.driver.switch_to.frame(iframe_index)
+        else:
+            allure.attach('定位类型:{}; 定位值:{}'.format(selector.split('=>')[0], selector.split('=>')[1]), "操作信息")
+            el = self.find_element(selector)
+            self.driver.switch_to.frame(el)
+
+    @allure.step("退出iframe")
+    def quit_iframe(self):
+        self.driver.switch_to.default_context()
