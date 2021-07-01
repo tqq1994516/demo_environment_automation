@@ -257,7 +257,8 @@ class BasePage(object):
             # 打开新标签页并切换到新标签页
             self.driver.switch_to.new_window('tab')
         else:
-            self.driver.switch_to.new_window('tab')
+            # 打开一个新窗口并切换到新窗口
+            self.driver.switch_to.new_window('window')
         # 循环执行，直到找到一个新的窗口句柄
         for window_handle in self.driver.window_handles:
             if window_handle != self.original_window:
