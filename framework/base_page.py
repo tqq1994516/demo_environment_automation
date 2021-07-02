@@ -1,16 +1,16 @@
 # coding=utf-8
 import os
+import sys
 import time
-import win32clipboard as WC
 import allure
-import win32api
-import win32con
 from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException, ElementNotSelectableException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from framework.logger import Logger
 from selenium.webdriver.common.action_chains import ActionChains
+from pykeyboard import PyKeyboard
+import pyperclip
 
 # create a logger instance
 logger = Logger(logger="BasePage").getlog()
@@ -389,15 +389,7 @@ class UploadFile(object):
     """
     上传文件， 通过将文件传至剪切板后上传窗体中粘贴实现选择文件
     """
-    # 键盘码
-    vk_code = {
-        'enter': 0x0D,
-        'ctrl': 0x11,
-        'v': 0x56,
-        'a': 0x41,
-        'f4': 0x73,
-        'tab': 0x09
-    }
+    k = PyKeyboard()
 
     @allure.step("按下按键")
     def keyDown(self, key_name):
@@ -407,11 +399,20 @@ class UploadFile(object):
         :return:
         """
         allure.attach('按键值:{}'.format(key_name), "操作信息")
-        key_name = key_name.lower()
         try:
-            win32api.keybd_event(self.vk_code[key_name], 0, 0, 0)
+            if key_name[0] == 'f':
+                int(key_name.pop(key_name[0]))
+                self.k.press_key(self.k.function_keys[key_name])
+            elif key_name == 'enter':
+                self.k.press_key(self.k.enter_key)
+            elif key_name == 'ctrl':
+                self.k.press_key(self.k.control_key)
+            elif key_name == 'tab':
+                self.k.press_key(self.k.tab_key)
+            else:
+                self.k.press_key(key_name)
         except Exception as e:
-            print('未按下enter键')
+            print('未按下' + key_name + '键')
             raise e
 
     @allure.step("抬起按键")
@@ -422,33 +423,55 @@ class UploadFile(object):
         :return:
         """
         allure.attach('按键值:{}'.format(key_name), "操作信息")
-        key_name = key_name.lower()
-        win32api.keybd_event(self.vk_code[key_name], 0, win32con.KEYEVENTF_KEYUP, 0)
+        try:
+            if key_name[0] == 'f':
+                int(key_name.pop(key_name[0]))
+                self.k.release_key(self.k.function_keys[key_name])
+            elif key_name == 'enter':
+                self.k.release_key(self.k.enter_key)
+            elif key_name == 'ctrl':
+                self.k.release_key(self.k.control_key)
+            elif key_name == 'tab':
+                self.k.release_key(self.k.tab_key)
+            else:
+                self.k.release_key(key_name)
+        except Exception as e:
+            print('未松开' + key_name + '键')
+            raise e
 
     @allure.step("模拟单个按键")
-    def oneKey(self, key):
+    def oneKey(self, key_name):
         """
         模拟单个按键
-        :param key: 按下键可选：enter、ctrl、v
+        :param key_name: 按下键可选：enter、ctrl、v
         :return:
         """
-        allure.attach('按键值:{}'.format(key), "操作信息")
-        key = key.lower()
-        self.keyDown(key)
-        time.sleep(2)
-        self.keyUp(key)
+        allure.attach('按键值:{}'.format(key_name), "操作信息")
+        try:
+            if key_name[0] == 'f':
+                int(key_name.pop(key_name[0]))
+                self.k.tap_key(self.k.function_keys[key_name])
+            elif key_name == 'enter':
+                self.k.tap_key(self.k.enter_key)
+            elif key_name == 'ctrl':
+                self.k.tap_key(self.k.control_key)
+            elif key_name == 'tab':
+                self.k.tap_key(self.k.tab_key)
+            else:
+                self.k.tap_key(key_name)
+        except Exception as e:
+            print('未敲击' + key_name + '键')
+            raise e
 
     @allure.step("模拟组合按键")
     def twoKeys(self, key1, key2):
         """
         模拟组合按键， 模拟ctrl+v， key1传ctrl，key2传v
-        :param key1: 按下键可选：enter、ctrl、v
-        :param key2: 按下键可选：enter、ctrl、v
+        :param key1: 按下键可选
+        :param key2: 按下键可选
         :return:
         """
         allure.attach('按键值1:{}; 按键值1:{}'.format(key1, key2), "操作信息")
-        key1 = key1.lower()
-        key2 = key2.lower()
         self.keyDown(key1)
         self.keyDown(key2)
         self.keyUp(key2)
@@ -460,9 +483,7 @@ class UploadFile(object):
         获取剪切板的内容
         :return: 返回剪切板第一个内容
         """
-        WC.OpenClipboard()
-        value = WC.GetClipboardData(win32con.CF_TEXT)
-        WC.CloseClipboard()
+        value = pyperclip.paste()
         allure.attach('获取内容为:{}'.format(value), "操作信息")
         return value
 
@@ -470,36 +491,38 @@ class UploadFile(object):
     def setText(self, value):
         """
         设置剪切板的内容
-        :param value: 上传文件绝对路径
+        :param value: 上传文件路径
         :return:
         """
         allure.attach('设置内容为:{}'.format(value), "操作信息")
-        WC.OpenClipboard()
-        WC.EmptyClipboard()
-        WC.SetClipboardData(win32con.CF_UNICODETEXT, value)
-        WC.CloseClipboard()
+        pyperclip.copy(value)
 
     @allure.step("上传文件")
     def upload_file(self, file_path, file_name):
         """
         通过将文件路径设置至剪切板，在上传窗体依次进行ctrl+v、enter的模拟键盘操作，实现选择文件、确认操作
-        :param key1: 默认ctrl
-        :param key2: 默认v
-        :param key3: 默认enter
+        :param file_path: 文件路径，结尾不要有分隔符
+        :param file_name: 文件名
         :return:
         """
         allure.attach('上传文件为:{}'.format(file_path), "操作信息")
-        self.setText(file_path)
-        self.oneKey('f4')
-        self.twoKeys('ctrl', 'a')
-        self.twoKeys('ctrl', 'v')
-        self.oneKey('enter')
-        self.oneKey('tab')
-        self.oneKey('tab')
-        self.oneKey('tab')
-        self.oneKey('tab')
-        self.oneKey('tab')
-        self.oneKey('tab')
-        self.setText(file_name)
-        self.twoKeys('ctrl', 'v')
-        self.oneKey('enter')
+        system = sys.platform
+        if 'win' in system:
+            self.setText(file_path)
+            self.oneKey('f4')
+            self.twoKeys('ctrl', 'a')
+            self.twoKeys('ctrl', 'v')
+            self.oneKey('enter')
+            self.oneKey('tab')
+            self.oneKey('tab')
+            self.oneKey('tab')
+            self.oneKey('tab')
+            self.oneKey('tab')
+            self.oneKey('tab')
+            self.setText(file_name)
+            self.twoKeys('ctrl', 'v')
+            self.oneKey('enter')
+        else:
+            self.setText(file_path + os.path.sep + file_name)
+            self.twoKeys('ctrl', 'v')
+            self.oneKey('enter')

@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import date
 import pytest
 from framework.browser_engine import BrowserEngine
@@ -6,8 +7,6 @@ from framework.base_page import BasePage, UploadFile
 from framework.send_email import send_email
 import json
 import allure
-import win32gui
-import win32con
 
 
 with open(os.getcwd() + "/config/url_info.json", encoding='utf-8') as f:
@@ -45,8 +44,6 @@ class TestClass(object):
         with allure.step("断言结果"):
             allure.attach('期望结果:{}; 实际结果:{}'.format(assert_str, actual_str), "断言结论")
             assert assert_str in actual_str, "failed!!! 预期结果:{}; 与实际结果不符:{}".format(assert_str, actual_str)
-
-
 
     # def str_split(self, s):
     #     t = s.split('=>')[0]
