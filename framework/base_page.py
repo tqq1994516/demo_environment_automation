@@ -401,8 +401,7 @@ class UploadFile(object):
         allure.attach('按键值:{}'.format(key_name), "操作信息")
         try:
             if key_name[0] == 'f':
-                int(key_name.pop(key_name[0]))
-                self.k.press_key(self.k.function_keys[key_name])
+                self.k.press_key(self.k.function_keys[int(key_name.lstrip(key_name[0]))])
             elif key_name == 'enter':
                 self.k.press_key(self.k.enter_key)
             elif key_name == 'ctrl':
@@ -425,8 +424,7 @@ class UploadFile(object):
         allure.attach('按键值:{}'.format(key_name), "操作信息")
         try:
             if key_name[0] == 'f':
-                int(key_name.pop(key_name[0]))
-                self.k.release_key(self.k.function_keys[key_name])
+                self.k.release_key(self.k.function_keys[int(key_name.lstrip(key_name[0]))])
             elif key_name == 'enter':
                 self.k.release_key(self.k.enter_key)
             elif key_name == 'ctrl':
@@ -440,25 +438,26 @@ class UploadFile(object):
             raise e
 
     @allure.step("模拟单个按键")
-    def oneKey(self, key_name):
+    def oneKey(self, key_name, n=1, i=1):
         """
         模拟单个按键
-        :param key_name: 按下键可选：enter、ctrl、v
+        :param key_name: 按下键
+        :param n: 次数
+        :param i: 间隔
         :return:
         """
         allure.attach('按键值:{}'.format(key_name), "操作信息")
         try:
             if key_name[0] == 'f':
-                int(key_name.pop(key_name[0]))
-                self.k.tap_key(self.k.function_keys[key_name])
+                self.k.tap_key(self.k.function_keys[int(key_name.lstrip(key_name[0]))], n, i)
             elif key_name == 'enter':
-                self.k.tap_key(self.k.enter_key)
+                self.k.tap_key(self.k.enter_key, n, i)
             elif key_name == 'ctrl':
-                self.k.tap_key(self.k.control_key)
+                self.k.tap_key(self.k.control_key, n, i)
             elif key_name == 'tab':
-                self.k.tap_key(self.k.tab_key)
+                self.k.tap_key(self.k.tab_key, n, i)
             else:
-                self.k.tap_key(key_name)
+                self.k.tap_key(key_name, n, i)
         except Exception as e:
             print('未敲击' + key_name + '键')
             raise e
@@ -513,12 +512,7 @@ class UploadFile(object):
             self.twoKeys('ctrl', 'a')
             self.twoKeys('ctrl', 'v')
             self.oneKey('enter')
-            self.oneKey('tab')
-            self.oneKey('tab')
-            self.oneKey('tab')
-            self.oneKey('tab')
-            self.oneKey('tab')
-            self.oneKey('tab')
+            self.oneKey('tab', 6, 1)
             self.setText(file_name)
             self.twoKeys('ctrl', 'v')
             self.oneKey('enter')
