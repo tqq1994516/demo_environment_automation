@@ -11,6 +11,7 @@ from framework.logger import Logger
 from selenium.webdriver.common.action_chains import ActionChains
 from pykeyboard import PyKeyboard
 import pyperclip
+from subprocess import Popen, PIPE
 
 # create a logger instance
 logger = Logger(logger="BasePage").getlog()
@@ -104,14 +105,19 @@ class BasePage(object):
         wait = WebDriverWait(self.driver, wait_time, poll_frequency=step,
                              ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException])
         if selector_type == 'x':
+            logger.info('wait element type:{}, value:{} '.format('XPATH', selector_value))
             wait.until(EC.visibility_of_element_located((By.XPATH, selector_value)), "%s not find" % selector_value)
         elif selector_type == 'n':
+            logger.info('wait element type:{}, value:{} '.format('NAME', selector_value))
             wait.until(EC.visibility_of_element_located((By.NAME, selector_value)), "%s not find" % selector_value)
         elif selector_type == 'c':
+            logger.info('wait element type:{}, value:{} '.format('CLASS_NAME', selector_value))
             wait.until(EC.presence_of_element_located((By.CLASS_NAME, selector_value)), "%s not find" % selector_value)
         elif selector_type == 'i':
+            logger.info('wait element type:{}, value:{} '.format('ID', selector_value))
             wait.until(EC.presence_of_element_located((By.ID, selector_value)), "%s not find" % selector_value)
         elif selector_type == 's':
+            logger.info('wait element type:{}, value:{} '.format('CSS_SELECTOR', selector_value))
             wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector_value)),
                        "%s not find" % selector_value)
 
@@ -273,9 +279,11 @@ class BasePage(object):
                 allure.attach('定位类型:{}; 定位值:{}'.format(selector.split('=>')[0], selector.split('=>')[1]), "操作信息")
                 el = self.find_element(selector)
                 self.driver.execute_script(js, el)
+                logger.info('execute js:{} with element:{}'.format(js, selector))
             else:
                 allure.attach('定位类型:{}; 定位值:{}'.format(js.split(').')[0], js.split(').')[1]), "操作信息")
                 self.driver.execute_script(js)
+                logger.info('execute js:{} with element:{}'.format(js, js.split(').')[0]))
         except NameError as e:
             logger.error("Failed to click the element with %s" % e)
 
@@ -290,6 +298,7 @@ class BasePage(object):
         el_text = self.find_element(selector).text
         allure.attach('定位类型:{}; 定位值:{}; 获取值:{} '.format(selector.split('=>')[0], selector.split('=>')[1], el_text),
                       "操作信息")
+        logger.info('text is {}'.format(el_text))
         return el_text
 
     # 获取网页标题
@@ -328,19 +337,22 @@ class BasePage(object):
         if type == 'tab':
             # 打开新标签页并切换到新标签页
             self.driver.switch_to.new_window('tab')
+            logger.info('successful create new tab')
         else:
             # 打开一个新窗口并切换到新窗口
             self.driver.switch_to.new_window('window')
+            logger.info('successful create new window')
         # 循环执行，直到找到一个新的窗口句柄
         for window_handle in self.driver.window_handles:
             if window_handle != self.original_window:
                 self.driver.switch_to.window(window_handle)
+                logger.info('switch to handle {}'.format(window_handle))
                 break
         self.driver.get(url)
+        logger.info('open new url:{}'.format(url))
 
     @allure.step("滑动滑块")
     def move_slider(self, target_selector, source_selector=None, x=None, y=None):
-        el = self.find_element(target_selector)
         actions = ActionChains(self.driver)
         if source_selector:
             allure.attach('源元素定位类型:{}; 源元素定位值:{}; 目标元素定位类型:{}; 目标元素定位值:{}'.format(source_selector.split('=>')[0],
@@ -348,41 +360,52 @@ class BasePage(object):
                                                                                   target_selector.split('=>')[0],
                                                                                   target_selector.split('=>')[1]),
                           "操作信息")
+            el = self.find_element(source_selector)
             elX = el.location.get('x')
             elY = el.location.get('y')
+            el = self.find_element(target_selector)
             actions.move_by_offset(elX, elY).perform()
+            logger.info('move slider:{}, offset x:{},y:{}'.format(target_selector, elX, elY))
         else:
             allure.attach('目标元素定位类型:{}; 目标元素定位值:{}; 滑动距离(x:{},y:{})'.format(target_selector.split('=>')[0],
                                                                             target_selector.split('=>')[1], x, y),
                           "操作信息")
+            el = self.find_element(target_selector)
             actions.move_by_offset(x, y).perform()
         actions.release().perform()
+        logger.info('move slider:{}, offset x:{},y:{}'.format(target_selector, x, y))
 
     @allure.step("切回之前的窗口或标签")
     def switch_original_window(self):
         """切回之前的窗口或标签"""
         if self.original_window:
             self.driver.switch_to.window(self.original_window)
+            logger.info('switch to handle {}'.format(self.original_window))
         else:
             self.driver.switch_to.window(self.driver.window_handles[-1])
+            logger.info('switch to handle {}'.format(self.driver.window_handles[-1]))
 
     @allure.step("切换iframe")
     def switch_iframe(self, iframe_id=None, iframe_index=None, selector=None):
         if iframe_id:
             allure.attach('切换iframe_id:{}'.format(iframe_id), "操作信息")
             self.driver.switch_to.frame(iframe_id)
+            logger.info('switch to iframe id:{}'.format(iframe_id))
         elif iframe_index:
             allure.attach('切换iframe_index:{}'.format(iframe_index), "操作信息")
             self.driver.switch_to.frame(iframe_index)
+            logger.info('switch to iframe index:{}'.format(iframe_index))
         else:
             allure.attach('定位类型:{}; 定位值:{}'.format(selector.split('=>')[0], selector.split('=>')[1]), "操作信息")
             el = self.find_element(selector)
             self.driver.switch_to.frame(el)
+            logger.info('switch to iframe el:{}'.format(selector))
 
     @allure.step("退出iframe")
     def quit_iframe(self):
         """退出iframe"""
         self.driver.switch_to.default_context()
+        logger.info('quit iframe')
 
 
 class UploadFile(object):
@@ -410,8 +433,9 @@ class UploadFile(object):
                 self.k.press_key(self.k.tab_key)
             else:
                 self.k.press_key(key_name)
+            logger.info('press key {}'.format(key_name))
         except Exception as e:
-            print('未按下' + key_name + '键')
+            logger.info('未按下' + key_name + '键')
             raise e
 
     @allure.step("抬起按键")
@@ -433,8 +457,9 @@ class UploadFile(object):
                 self.k.release_key(self.k.tab_key)
             else:
                 self.k.release_key(key_name)
+            logger.info('release key {}'.format(key_name))
         except Exception as e:
-            print('未松开' + key_name + '键')
+            logger.info('未松开' + key_name + '键')
             raise e
 
     @allure.step("模拟单个按键")
@@ -458,8 +483,9 @@ class UploadFile(object):
                 self.k.tap_key(self.k.tab_key, n, i)
             else:
                 self.k.tap_key(key_name, n, i)
+            logger.info('tap key {}'.format(key_name))
         except Exception as e:
-            print('未敲击' + key_name + '键')
+            logger.info('未敲击' + key_name + '键')
             raise e
 
     @allure.step("模拟组合按键")
@@ -475,6 +501,7 @@ class UploadFile(object):
         self.keyDown(key2)
         self.keyUp(key2)
         self.keyUp(key1)
+        logger.info('tap {},{} together'.format(key1, key2))
 
     @allure.step("获取剪切板的内容")
     def getText(self):
@@ -484,6 +511,7 @@ class UploadFile(object):
         """
         value = pyperclip.paste()
         allure.attach('获取内容为:{}'.format(value), "操作信息")
+        logger.info('clip value:{}'.format(value))
         return value
 
     @allure.step("设置剪切板的内容")
@@ -495,6 +523,7 @@ class UploadFile(object):
         """
         allure.attach('设置内容为:{}'.format(value), "操作信息")
         pyperclip.copy(value)
+        logger.info('set clip value:{}'.format(value))
 
     @allure.step("上传文件")
     def upload_file(self, file_path, file_name):
@@ -517,6 +546,12 @@ class UploadFile(object):
             self.twoKeys('ctrl', 'v')
             self.oneKey('enter')
         else:
-            self.setText(file_path + os.path.sep + file_name)
+            try:
+                self.setText(file_path + os.path.sep + file_name)
+            except:
+                file = file_path + os.path.sep + file_name
+                p = Popen(['xsel', '-bi'], stdin=PIPE)
+                p.communicate(input=file)
             self.twoKeys('ctrl', 'v')
             self.oneKey('enter')
+        logger.info('upload file success file:{}'.format(file_path + os.path.sep + file_name))
