@@ -11,6 +11,7 @@ from framework.logger import Logger
 from selenium.webdriver.common.action_chains import ActionChains
 from pykeyboard import PyKeyboard
 import pyperclip
+from pynput.keyboard import Key, Controller
 from subprocess import Popen, PIPE
 
 # create a logger instance
@@ -412,17 +413,22 @@ class UploadFile(object):
     """
     上传文件， 通过将文件传至剪切板后上传窗体中粘贴实现选择文件
     """
+    # PyUserInput写法（linux无界面无法使用）
     k = PyKeyboard()
+
+    # pynput写法
+    # k = Controller()
 
     @allure.step("按下按键")
     def keyDown(self, key_name):
         """
         按下按键
-        :param key_name: 按下键可选：enter、ctrl、v
+        :param key_name: 按下键可选
         :return:
         """
         allure.attach('按键值:{}'.format(key_name), "操作信息")
         try:
+            # PyUserInput写法（linux无界面无法使用）
             if key_name[0] == 'f':
                 self.k.press_key(self.k.function_keys[int(key_name.lstrip(key_name[0]))])
             elif key_name == 'enter':
@@ -434,6 +440,20 @@ class UploadFile(object):
             else:
                 self.k.press_key(key_name)
             logger.info('press key {}'.format(key_name))
+
+            # pynput写法
+            # if key_name[0] == 'f':
+            #     if key_name == 'f1':
+            #         self.k.press(getattr(Key, key_name))
+            # elif key_name == 'enter':
+            #     self.k.press(Key.enter)
+            # elif key_name == 'ctrl':
+            #     self.k.press(Key.ctrl)
+            # elif key_name == 'tab':
+            #     self.k.press(Key.tab)
+            # else:
+            #     self.k.press_key(key_name)
+            # logger.info('press key {}'.format(key_name))
         except Exception as e:
             logger.info('未按下' + key_name + '键')
             raise e
@@ -447,6 +467,7 @@ class UploadFile(object):
         """
         allure.attach('按键值:{}'.format(key_name), "操作信息")
         try:
+            # PyUserInput写法（linux无界面无法使用）
             if key_name[0] == 'f':
                 self.k.release_key(self.k.function_keys[int(key_name.lstrip(key_name[0]))])
             elif key_name == 'enter':
@@ -457,7 +478,21 @@ class UploadFile(object):
                 self.k.release_key(self.k.tab_key)
             else:
                 self.k.release_key(key_name)
-            logger.info('release key {}'.format(key_name))
+            logger.info('press key {}'.format(key_name))
+
+            # pynput写法
+            # if key_name[0] == 'f':
+            #     if key_name == 'f1':
+            #         self.k.release(getattr(Key, key_name))
+            # elif key_name == 'enter':
+            #     self.k.release(Key.enter)
+            # elif key_name == 'ctrl':
+            #     self.k.release(Key.ctrl)
+            # elif key_name == 'tab':
+            #     self.k.release(Key.tab)
+            # else:
+            #     self.k.release(key_name)
+            # logger.info('press key {}'.format(key_name))
         except Exception as e:
             logger.info('未松开' + key_name + '键')
             raise e
@@ -473,6 +508,7 @@ class UploadFile(object):
         """
         allure.attach('按键值:{}'.format(key_name), "操作信息")
         try:
+            # PyUserInput写法（linux无界面无法使用）
             if key_name[0] == 'f':
                 self.k.tap_key(self.k.function_keys[int(key_name.lstrip(key_name[0]))], n, i)
             elif key_name == 'enter':
@@ -483,7 +519,20 @@ class UploadFile(object):
                 self.k.tap_key(self.k.tab_key, n, i)
             else:
                 self.k.tap_key(key_name, n, i)
-            logger.info('tap key {}'.format(key_name))
+
+            # pynput写法
+            # if key_name[0] == 'f':
+            #     if key_name == 'f1':
+            #         self.k.tap(getattr(Key, key_name))
+            # elif key_name == 'enter':
+            #     self.k.tap(Key.enter)
+            # elif key_name == 'ctrl':
+            #     self.k.tap(Key.ctrl)
+            # elif key_name == 'tab':
+            #     self.k.tap(Key.tab)
+            # else:
+            #     self.k.tap(key_name)
+            # logger.info('tap key {}'.format(key_name))
         except Exception as e:
             logger.info('未敲击' + key_name + '键')
             raise e
@@ -497,10 +546,14 @@ class UploadFile(object):
         :return:
         """
         allure.attach('按键值1:{}; 按键值1:{}'.format(key1, key2), "操作信息")
-        self.keyDown(key1)
-        self.keyDown(key2)
-        self.keyUp(key2)
-        self.keyUp(key1)
+        # PyUserInput写法（linux无界面无法使用）
+        # self.keyDown(key1)
+        # self.keyDown(key2)
+        # self.keyUp(key2)
+        # self.keyUp(key1)
+        # pynput写法
+        with self.k.pressed(getattr(Key, key1)):
+            self.oneKey(key2)
         logger.info('tap {},{} together'.format(key1, key2))
 
     @allure.step("获取剪切板的内容")
